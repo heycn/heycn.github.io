@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="陈楠的博客" />
+  <meta name="author" content="陈楠" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      如何优化你的 JS 代码？ 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="head">
+        <div class="avatar">
+  <a href="/">
+    <img src="/images/avatar.png" alt="" />
+  </a>
+</div>
+
+        <p class="links">
+  
+    <a title="Blog" target="" href="/archives">
+      <i class="iconfont icon-emoji-friendly"></i>
+      Blog
+    </a>
+  
+    <a title="Docs" target="_blank" href="/">
+      <i class="iconfont icon-tags"></i>
+      Docs
+    </a>
+  
+    <a title="GitHub" target="_blank" href="https://github.com/heycn">
+      <i class="iconfont icon-github"></i>
+      GitHub
+    </a>
+  
+    <a title="WeChat" target="_blank" href="/images/wechat.jpg">
+      <i class="iconfont icon-wechat"></i>
+      WeChat
+    </a>
+  
+    <a title="Twitter" target="_blank" href="https://twitter.com/heycn_112">
+      <i class="iconfont icon-twitter"></i>
+      Twitter
+    </a>
+  
+    <a title="Email" target="" href="mailto:heycn@foxmail.com">
+      <i class="iconfont icon-envelope"></i>
+      Email
+    </a>
+  
+</p>
+
+      </div>
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [
+        ['$', '$'],
+        ['\\(', '\\)']
+      ]
+    }
+  }
+</script>
+
+<div class="post">
+  <h1 class="post-title">如何优化你的 JS 代码？</h1>
+  <h3 class="date">Mar 13, 2023</h3>
+  <div class="content markdown-body"><p>我对代码有洁癖，喜欢代码简写优化 (在保证可读性和可维护性的前提下)</p>
+<p>正好最近看到一篇文章，觉得对新手很有帮助，就翻译给下</p>
+<p>希望能对大家有所帮助 ｜ <a target="_blank" rel="noopener" href="https://www.freecodecamp.org/news/simplify-javascript-code/">原文</a></p>
+<hr>
+<p>作为一个程序员，写出简洁和可维护的代码是我们的目标。但有时候，当我们在一个复杂、难以管理的大型项目时，便难以实现</p>
+<p><code>简化代码</code> 是避免这种情况的方法之一，这个方法可以来帮助提高代码的可读性、效率和可维护性</p>
+<p>这篇文章将讨论简化 <code>JS</code> 代码的 10 种方法，使其变得更具可读性和可维护性，让我想现在开始吧！</p>
+<h2 id="一、使用箭头函数"><a href="#一、使用箭头函数" class="headerlink" title="一、使用箭头函数"></a>一、使用箭头函数</h2><p>箭头函数是 JavaScript 中创建函数的一种简单方法，他们通过减少定义一个函数所需的模版来简化你的代码</p>
+<p>例如，使用 <code>function</code> 关键字来定义函数是这样的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">sayHello</span>(<span class="params">name</span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Hello, <span class="subst">$&#123;name&#125;</span>!`</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用箭头函数，你可以这样写：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">sayHello</span> = name =&gt; <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Hello, <span class="subst">$&#123;name&#125;</span>!`</span>)</span><br></pre></td></tr></table></figure>
+
+<p>除了箭头函数具有更简短的语法外，它可以使你的代码更简洁、更具可读性和减少出错。这使它成为比使用 <code>function</code> 关键字更好的选择</p>
+<h2 id="二、使用具有描述性的变量名"><a href="#二、使用具有描述性的变量名" class="headerlink" title="二、使用具有描述性的变量名"></a>二、使用具有描述性的变量名</h2><p>使用具有描述性的变量名可以使你的代码更具可读性，更容易理解。这比使用单字母的缩写要好得多，因为其他人在阅读你的代码时可能不会立即明白这些变量的含义。</p>
+<p>不使用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> x = <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<p>使用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> numberOfItems = <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<p><code>numberOfItems</code> 比 <code>x</code> 更有描述性，可以帮助你（或其他查看你代码的开发者）理解它在做什么。</p>
+<h2 id="三、使用函数式编程"><a href="#三、使用函数式编程" class="headerlink" title="三、使用函数式编程"></a>三、使用函数式编程</h2><p>函数式编程优先考虑使用纯函数和不可变的数据结构。使用函数式编程技术可以帮助大大简化你的代码，减少 bug 和副作用的风险。</p>
+<p>例如，不要在原地修改一个数组：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">arr.<span class="title function_">push</span>(<span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+
+<p>你可以使用扩展运算符来创建一个新数组：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line"><span class="keyword">const</span> newNumbers = [...numbers, <span class="number">4</span>]</span><br></pre></td></tr></table></figure>
+
+<p>使用扩展运算符可以帮助你防止意外的副作用，使你的代码更好预测和推理。</p>
+<p>当你在原地修改函数时，你改变了原来的数组或对象，如果你代码的另一部分依赖于该数组或对象，那么就会导致 bug 和意想不到的行为。</p>
+<p>另一方面，使用扩展运算符会创建一个新的数组或对象，而保留原有的数组或对象。这使得你的代码更容易预测和推理。</p>
+<h2 id="四、避免嵌套代码"><a href="#四、避免嵌套代码" class="headerlink" title="四、避免嵌套代码"></a>四、避免嵌套代码</h2><p>嵌套代码会使其难以阅读和理解，一个更好的方法是尽可能地使你的代码扁平化。你可以通过使用提前 <code>return</code>、三元运算符和函数组合来做到这一点。</p>
+<p>例如，不要 if 嵌套：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (condition1) &#123;</span><br><span class="line">  <span class="keyword">if</span> (condition2) &#123;</span><br><span class="line">    <span class="comment">// code</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用提前 <code>return</code>：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!condition1) <span class="keyword">return</span></span><br><span class="line"><span class="keyword">if</span> (!condition2) <span class="keyword">return</span></span><br><span class="line"><span class="comment">// code</span></span><br></pre></td></tr></table></figure>
+
+<p>在这里使用提前 <code>return</code> 使我们的代码更容易阅读和理解，因为它将每个条件分解成一个单独的 if 语句，并在任何条件不成立时提前返回。</p>
+<p>早期返回也可以通过防止不必要的计算来提高你的代码的效率。</p>
+<h2 id="五、使用默认参数"><a href="#五、使用默认参数" class="headerlink" title="五、使用默认参数"></a>五、使用默认参数</h2><p>使用默认参数允许你为一个函数参数指定一个默认值。这可以通过减少你需要编写的条件语句的数量来简化你的代码。</p>
+<p>例如，不要使用条件逻辑来设置一个默认值：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">greet</span> = name =&gt; &#123;</span><br><span class="line">  <span class="keyword">if</span> (!name) &#123;</span><br><span class="line">    name = <span class="string">&#x27;World&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Hello, <span class="subst">$&#123;name&#125;</span>!`</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>你可以使用默认参数来设置一个默认值：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">greet</span> = (<span class="params">name = <span class="string">&#x27;World&#x27;</span></span>) =&gt; <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Hello, <span class="subst">$&#123;name&#125;</span>!`</span>)</span><br></pre></td></tr></table></figure>
+
+<p>默认参数为你提供了一个简单的方法来设置参数的默认值。但不仅如此，它使你的代码更加灵活，不容易出错，也使你的代码更容易理解。</p>
+<h2 id="六、使用解构赋值"><a href="#六、使用解构赋值" class="headerlink" title="六、使用解构赋值"></a>六、使用解构赋值</h2><p>解构允许你从数组和对象中提取值并将其分配给变量。这样做可以使你的代码更简明，更容易阅读。</p>
+<p>例如，不要像这样直接访问对象属性：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> person = &#123; <span class="attr">name</span>: <span class="string">&#x27;张三&#x27;</span>, <span class="attr">age</span>: <span class="number">18</span> &#125;</span><br><span class="line"><span class="keyword">const</span> name = person.<span class="property">name</span></span><br><span class="line"><span class="keyword">const</span> age = person.<span class="property">age</span></span><br></pre></td></tr></table></figure>
+
+<p>使用解构赋值：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; name, age &#125; = &#123; <span class="attr">name</span>: <span class="string">&#x27;张三&#x27;</span>, <span class="attr">age</span>: <span class="number">18</span> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用解构赋值会比访问对象属性好得多，因为它可以帮助你快速了解代码的目的，特别是在处理复杂的数据结构时。它还有助于减少你需要编写的代码量，提供灵活性，使代码更简洁，也有助于避免命名冲突</p>
+<h2 id="七、使用-Promise"><a href="#七、使用-Promise" class="headerlink" title="七、使用 Promise"></a>七、使用 Promise</h2><p><code>Promise</code> 允许你以一种更可读和可预测的方式编写异步代码。它们通过避免回调和使你能够将异步操作连在一起来简化你的代码。</p>
+<p>例如，不要使用回调的嵌套：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">getUserData</span> = (<span class="params">userId, callback</span>) =&gt; &#123;</span><br><span class="line">  <span class="title function_">getUser</span>(userId, <span class="function"><span class="params">user</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="title function_">getPosts</span>(user, <span class="function"><span class="params">posts</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="title function_">getComments</span>(posts, <span class="function"><span class="params">comments</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="title function_">callback</span>(comments)</span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>你可以使用 <code>Promise</code>：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">getUserData</span> = userId =&gt;</span><br><span class="line">  <span class="title function_">getUser</span>(userId)</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function"><span class="params">user</span> =&gt;</span> <span class="title function_">getPosts</span>(user))</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function"><span class="params">posts</span> =&gt;</span> <span class="title function_">getComments</span>(posts))</span><br></pre></td></tr></table></figure>
+
+<p>使用 <code>Promise</code> 而不是回调嵌套可以使代码更简洁，更容易阅读，特别是在处理复杂的异步操作时。</p>
+<h2 id="八、使用数组方法"><a href="#八、使用数组方法" class="headerlink" title="八、使用数组方法"></a>八、使用数组方法</h2><p><code>JavaScript</code>有许多操作数组的内置方法，如 <code>map</code>、<code>filter</code>、<code>reduce</code> 和 <code>forEach</code>。使用这些方法可以使你的代码更简明，更容易阅读。</p>
+<p>例如，不要使用 <code>for</code> 来遍历一个数组：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; numbers.<span class="property">length</span>; i++) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(numbers[i])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>你可以使用 <code>forEach</code>：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">numbers.<span class="title function_">forEach</span>(<span class="function"><span class="params">number</span> =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(number))</span><br></pre></td></tr></table></figure>
+
+<p>使用数组方法而不是传统的 <code>for循环</code> 可以使你的代码更加简洁、可读和模块化，同时还可以提供更好的错误处理并支持函数式编程。</p>
+<h2 id="九、使用对象方法"><a href="#九、使用对象方法" class="headerlink" title="九、使用对象方法"></a>九、使用对象方法</h2><p><code>JavaScript</code> 对象提供了各种内置方法，如 <code>Object.key</code>、<code>Object.values</code> 和 <code>Object.entry</code>。这些方法可以减少对循环和条件的需要，使你的代码更简洁。</p>
+<p>例如，不要用 <code>for</code> 来循环一个对象：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> person = &#123; <span class="attr">name</span>: <span class="string">&#x27;张三&#x27;</span>, <span class="attr">age</span>: <span class="number">18</span> &#125;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">const</span> key <span class="keyword">in</span> person) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;key&#125;</span>: <span class="subst">$&#123;person[key]&#125;</span>`</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>你可以使用 <code>Object.entries</code> 方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> person = &#123; <span class="attr">name</span>: <span class="string">&#x27;John&#x27;</span>, <span class="attr">age</span>: <span class="number">30</span> &#125;</span><br><span class="line"><span class="title class_">Object</span>.<span class="title function_">entries</span>(person).<span class="title function_">forEach</span>(<span class="function">(<span class="params">[key, value]</span>) =&gt;</span> <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;key&#125;</span>: <span class="subst">$&#123;value&#125;</span>`</span>))</span><br></pre></td></tr></table></figure>
+
+<p>和数组方法一样，使用对象方法可以使你的代码更加简洁、可读和模块化。</p>
+<h2 id="十、使用库和框架"><a href="#十、使用库和框架" class="headerlink" title="十、使用库和框架"></a>十、使用库和框架</h2><p><code>JavaScript</code> 有各种各样的模块和框架，可以帮助你减少创建模版文件，写更简单的代码。</p>
+<p>例如，用于构建用户界面的 <code>Vue、React</code>，实用工具类的 <code>Lodash</code>，以及用于处理日期和时间的 <code>day.js</code>。</p>
+<p>你可以考虑在以下情况下使用一个框架&#x2F;库：</p>
+<ul>
+<li>当你想建立一个复杂的应用时，其功能可以通过库或框架来实现。</li>
+<li>当你有一个紧张的时间进度，需要快速交付你的项目时候。</li>
+<li>当你想提高你的代码质量并减少长期的维护成本时。</li>
+</ul>
+<p>另一方面，你以下情况下尽可能避免使用框架&#x2F;库：</p>
+<ul>
+<li>当你的项目要求很简单，不需要外部工具。</li>
+<li>当你想控制你的代码并避免对外部工具的依赖时。</li>
+</ul>
+<h2 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h2><p>使用简化代码的优化方式可以使你的代码可读性和可维护性更高。通过遵循这些建议，你可以写出更好理解和更高效的代码。</p>
+<p>你还有什么建议？如果你觉得有帮助，别忘了分享。</p>
+<hr>
+<p>感谢阅读，下次见 :)</p>
+</div>
+   
+  <a id="older" class="blog-nav" href="/2023/02/10/function-is-so-funny-1/">OLDER&nbsp;&gt;</a>
+    
+  <br />
+  <a href="/archives">cd ../</a>
+</div>
+
+        <div class="footer">
+  
+  <div class="footer-more">
+      
+  </div>
+  
+  <div class="footer-more">
+      
+  </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+
+
+    </div>
+  </body>
+</html>

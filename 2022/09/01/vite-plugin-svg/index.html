@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="陈楠的博客" />
+  <meta name="author" content="陈楠" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      给 Vite 写个插件 —— SVG 优化 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="head">
+        <div class="avatar">
+  <a href="/">
+    <img src="/images/avatar.png" alt="" />
+  </a>
+</div>
+
+        <p class="links">
+  
+    <a title="Blog" target="" href="/archives">
+      <i class="iconfont icon-emoji-friendly"></i>
+      Blog
+    </a>
+  
+    <a title="Docs" target="_blank" href="/">
+      <i class="iconfont icon-tags"></i>
+      Docs
+    </a>
+  
+    <a title="GitHub" target="_blank" href="https://github.com/heycn">
+      <i class="iconfont icon-github"></i>
+      GitHub
+    </a>
+  
+    <a title="WeChat" target="_blank" href="/images/wechat.jpg">
+      <i class="iconfont icon-wechat"></i>
+      WeChat
+    </a>
+  
+    <a title="Twitter" target="_blank" href="https://twitter.com/heycn_112">
+      <i class="iconfont icon-twitter"></i>
+      Twitter
+    </a>
+  
+    <a title="Email" target="" href="mailto:heycn@foxmail.com">
+      <i class="iconfont icon-envelope"></i>
+      Email
+    </a>
+  
+</p>
+
+      </div>
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [
+        ['$', '$'],
+        ['\\(', '\\)']
+      ]
+    }
+  }
+</script>
+
+<div class="post">
+  <h1 class="post-title">给 Vite 写个插件 —— SVG 优化</h1>
+  <h3 class="date">Sep 01, 2022</h3>
+  <div class="content markdown-body"><p>我最近在开发一个 <code>vue3</code> + <code>tsx</code> + <code>vite</code> 项目的时候，发现有个用户体验上的问题：</p>
+<p>我在切换页面的时候，如果下一个页面有静态资源，比如 <code>SVG</code>，那么当网速慢的情况下，切换完页面后会有短暂的空白，如果有动画，就会让人感觉 <code>动画有点卡顿</code>，即使我提前固定了高度</p>
+<p>效果如下：</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a2a6dca37a734c478753b90a0b772364~tplv-k3u1fbpfcp-watermark.image" alt="2722161a844ce1e57dea376c0c3db9f1_1 (1).gif"></p>
+<p>那么该怎么解决这个问题？</p>
+<h2 id="一点想法"><a href="#一点想法" class="headerlink" title="一点想法"></a>一点想法</h2><p>我一开始想到的方法是：当用户在第一页的时候，就提前加载第二页的 <code>SVG</code><br>不过这有个问题：那我是不是在第一页的时候要请求第二页的 <code>SVG</code>，在第二页的时候也要请求第三页的 <code>SVG</code>，以此类推？</p>
+<p>我想一劳永逸地的解决这个问题：我把整个应用的所有 <code>SVG</code> 一次性加载，行不行？</p>
+<p>这个时候我想到一个技术，叫做 —— <code>CSS 雪碧图</code></p>
+<blockquote>
+<p>让我想起之前在猪场游戏开发时经常做的事 —— 「打图集」</p>
+</blockquote>
+<p>但是！<code>CSS 雪碧图</code> 这个东西，已经「过时了」—— 并且这个方式不太适合 <code>矢量图</code>，它适合 <code>.png</code>，而我用的是 <code>.svg</code></p>
+<p>那能不能我将所有 <code>SVG</code> 都打包成一个大的 <code>SVG</code>，然后用到的时候就显示，不用到的时候就把宽高设置为 0，并且隐藏？</p>
+<p>那就得使用 <code>SVG Sprites</code>！</p>
+<p>不过，<code>webpack</code> 有很多插件在 <code>Vite</code> 上没有，比如我目前想要的这个插件，所以就写一个 <code>SVG Sprites</code> 吧！</p>
+<h2 id="实现步骤"><a href="#实现步骤" class="headerlink" title="实现步骤"></a>实现步骤</h2><h3 id="一、思路"><a href="#一、思路" class="headerlink" title="一、思路"></a>一、思路</h3><ol>
+<li>如果加载的是 <code>svg</code>，就遍历某个文件目录</li>
+<li>将遍历的这些内容放进一个大东西里</li>
+<li>这个大东西插到 <code>div</code> 里</li>
+<li>再把这个 <code>div</code> 插到 <code>body</code> 里</li>
+</ol>
+<h3 id="二、安装-svgo-与-svgstore"><a href="#二、安装-svgo-与-svgstore" class="headerlink" title="二、安装 svgo 与 svgstore"></a>二、安装 <code>svgo</code> 与 <code>svgstore</code></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pnpm i -D svgo svgstore</span><br></pre></td></tr></table></figure>
+
+<h3 id="三、开始写插件"><a href="#三、开始写插件" class="headerlink" title="三、开始写插件"></a>三、开始写插件</h3><h4 id="1-设计"><a href="#1-设计" class="headerlink" title="1. 设计"></a>1. 设计</h4><p>新建这么个文件，这个文件就是我给 <code>Vite</code> 写的一个插件</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/25e2e3119d744e1ca898d8df943ff6e1~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<p>插件里有两个重要的函数：<code>resolveId</code> 和 <code>load</code></p>
+<ul>
+<li><code>resolveId</code> 用于 <code>解析/兼容</code></li>
+<li><code>load</code> 就相当于 <code>webpack</code> 的 <code>loader</code>，下面会有实现思路</li>
+</ul>
+<h4 id="3-为什么要写-resolveId？"><a href="#3-为什么要写-resolveId？" class="headerlink" title="3. 为什么要写 resolveId？"></a>3. 为什么要写 <code>resolveId</code>？</h4><blockquote>
+<p>这个很简单：只是为了兼容编辑器，免得在其他文件引用的时候 <code>@svgstore</code> 的时候会报错</p>
+</blockquote>
+<p>我们包含 <code>所有 SVG</code> 的 <code>大SVG</code> 其实是不存在的，那么就没办法 import，所以我们要在 <code>main.ts</code> 里引入 <code>@svgstore</code>，但是有一些编辑器不支持这样引入，会报错 <code>xxx不存在</code>，所以我们要做这么一个 <code>没必要的判断</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">resolveId</span>(<span class="params">id</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (id === <span class="string">&#x27;@svgstore&#x27;</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;svg_bundle.js&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-写-load-的思路"><a href="#4-写-load-的思路" class="headerlink" title="4. 写 load 的思路"></a>4. 写 <code>load</code> 的思路</h4><blockquote>
+<p>这其实就是 <code>webpack</code> 的 <code>loader</code></p>
+</blockquote>
+<ol>
+<li>如果加载的 <code>文件id</code> 是 <code>@svgstore</code>，我就创建一个 <code>sprites</code>，<code>sprites</code> 是 <code>svgstore</code> 提供的一个函数</li>
+<li>这个 <code>sprites</code> 是一个空的 <code>大SVG</code>，最终想要它 <code>包含所有 svg</code></li>
+<li>我们遍历了 <code>&#39;src/assets/icons&#39;</code> 目录下的 <code>所有文件</code>，也就是某个目录下的 <code>所有SVG</code>，<code>文件名</code> 对应 <code>svg 的 id</code>，<code>文件内容</code> 对应 <code>svg 的 内容</code>，最后把这些 <code>svgid</code> 和 <code>code</code> 加到 <code>sprites</code> 里</li>
+<li>到这里其实就已经完成了，不过还需要使用 <code>svgo</code> 来做优化 svg 文件：删除一些没有用的属性、空格…，这样可以让文件变得更小</li>
+<li>最后我们把 <code>code</code> 变成一个 <code>js</code> 文件 <code>return</code> 出去 —— 因为我们最终是要生成 <code>svg_bundle.js</code> 的 <code>js文件</code>，所以这个内容必须是一个 <code>合法的 JavaScript</code></li>
+<li>我们创建一个 <code>div</code>，<code>div</code> 的内容就是 <code>大SVG</code> 的内容</li>
+<li><code>没用到的 svg</code> 我们就把它的宽高设置为 0，并且隐藏起来，如果用到了再从后面插入</li>
+</ol>
+<h4 id="5-最终代码"><a href="#5-最终代码" class="headerlink" title="5. 最终代码"></a>5. 最终代码</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> path <span class="keyword">from</span> <span class="string">&#x27;path&#x27;</span></span><br><span class="line"><span class="keyword">import</span> fs <span class="keyword">from</span> <span class="string">&#x27;fs&#x27;</span></span><br><span class="line"><span class="keyword">import</span> store <span class="keyword">from</span> <span class="string">&#x27;svgstore&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123; optimize &#125; <span class="keyword">from</span> <span class="string">&#x27;svgo&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="title function_">svgstore</span> = (<span class="params">options = &#123;&#125;</span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> inputFolder = options.<span class="property">inputFolder</span> || <span class="string">&#x27;src/assets/icons&#x27;</span></span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    <span class="attr">name</span>: <span class="string">&#x27;svgstore&#x27;</span>,</span><br><span class="line">    <span class="title function_">resolveId</span>(<span class="params">id</span>) &#123;</span><br><span class="line">      <span class="keyword">if</span> (id === <span class="string">&#x27;@svgstore&#x27;</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;svg_bundle.js&#x27;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="title function_">load</span>(<span class="params">id</span>) &#123;</span><br><span class="line">      <span class="keyword">if</span> (id === <span class="string">&#x27;svg_bundle.js&#x27;</span>) &#123;</span><br><span class="line">        <span class="keyword">const</span> sprites = <span class="title function_">store</span>(options)</span><br><span class="line">        <span class="keyword">const</span> iconsDir = path.<span class="title function_">resolve</span>(inputFolder)</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">const</span> file <span class="keyword">of</span> fs.<span class="title function_">readdirSync</span>(iconsDir)) &#123;</span><br><span class="line">          <span class="keyword">const</span> filepath = path.<span class="title function_">join</span>(iconsDir, file)</span><br><span class="line">          <span class="keyword">const</span> svgid = path.<span class="title function_">parse</span>(file).<span class="property">name</span></span><br><span class="line">          <span class="keyword">let</span> code = fs.<span class="title function_">readFileSync</span>(filepath, &#123; <span class="attr">encoding</span>: <span class="string">&#x27;utf-8&#x27;</span> &#125;)</span><br><span class="line">          sprites.<span class="title function_">add</span>(svgid, code)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">const</span> &#123; <span class="attr">data</span>: code &#125; = <span class="title function_">optimize</span>(sprites.<span class="title function_">toString</span>(&#123; <span class="attr">inline</span>: options.<span class="property">inline</span> &#125;), &#123;</span><br><span class="line">          <span class="attr">plugins</span>: [<span class="string">&#x27;cleanupAttrs&#x27;</span>, <span class="string">&#x27;removeDoctype&#x27;</span>, <span class="string">&#x27;removeComments&#x27;</span>, <span class="string">&#x27;removeTitle&#x27;</span>, <span class="string">&#x27;removeDesc&#x27;</span>, <span class="string">&#x27;removeEmptyAttrs&#x27;</span>, &#123; <span class="attr">name</span>: <span class="string">&#x27;removeAttrs&#x27;</span>, <span class="attr">params</span>: &#123; <span class="attr">attrs</span>: <span class="string">&#x27;(data-name|data-xxx)&#x27;</span> &#125; &#125;]</span><br><span class="line">        &#125;)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">`const div = document.createElement(&#x27;div&#x27;)</span></span><br><span class="line"><span class="string">	  div.innerHTML = \`<span class="subst">$&#123;code&#125;</span>\`</span></span><br><span class="line"><span class="string">	  const svg = div.getElementsByTagName(&#x27;svg&#x27;)[0]</span></span><br><span class="line"><span class="string">	  if (svg) &#123;</span></span><br><span class="line"><span class="string">	      svg.style.position = &#x27;absolute&#x27;</span></span><br><span class="line"><span class="string">	      svg.style.width = 0</span></span><br><span class="line"><span class="string">	      svg.style.height = 0</span></span><br><span class="line"><span class="string">	      svg.style.overflow = &#x27;hidden&#x27;</span></span><br><span class="line"><span class="string">	      svg.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;)</span></span><br><span class="line"><span class="string">	    &#125;</span></span><br><span class="line"><span class="string">	    // listen dom ready event</span></span><br><span class="line"><span class="string">	    document.addEventListener(&#x27;DOMContentLoaded&#x27;, () =&gt; &#123;</span></span><br><span class="line"><span class="string">	      if (document.body.firstChild) &#123;</span></span><br><span class="line"><span class="string">	        document.body.insertBefore(div, document.body.firstChild)</span></span><br><span class="line"><span class="string">	      &#125; else &#123;</span></span><br><span class="line"><span class="string">	      document.body.appendChild(div)</span></span><br><span class="line"><span class="string">	    &#125;</span></span><br><span class="line"><span class="string">	  &#125;)</span></span><br><span class="line"><span class="string">	`</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="四、配置-x2F-引用插件"><a href="#四、配置-x2F-引用插件" class="headerlink" title="四、配置&#x2F;引用插件"></a>四、配置&#x2F;引用插件</h3><h4 id="1-tsconfig-node-json"><a href="#1-tsconfig-node-json" class="headerlink" title="1. tsconfig.node.json"></a>1. tsconfig.node.json</h4><blockquote>
+<p>在 <code>&quot;include&quot;</code> 里把 <code>&quot;src/vite_plugins/**/*&quot;</code> 加进去</p>
+</blockquote>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;compilerOptions&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;composite&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;module&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ESNext&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;moduleResolution&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Node&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;allowSyntheticDefaultImports&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;include&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;vite.config.ts&quot;</span><span class="punctuation">,</span> <span class="string">&quot;src/vite_plugins/**/*&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-vite-config-ts"><a href="#2-vite-config-ts" class="headerlink" title="2. vite.config.ts"></a>2. vite.config.ts</h4><blockquote>
+<p>引入 <code>svgstore</code>，并且使用 <code>svgstore()</code></p>
+</blockquote>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; defineConfig &#125; <span class="keyword">from</span> <span class="string">&#x27;vite&#x27;</span></span><br><span class="line"><span class="keyword">import</span> vue <span class="keyword">from</span> <span class="string">&#x27;@vitejs/plugin-vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> vueJsx <span class="keyword">from</span> <span class="string">&#x27;@vitejs/plugin-vue-jsx&#x27;</span></span><br><span class="line"><span class="comment">// @ts-nocheck</span></span><br><span class="line"><span class="keyword">import</span> &#123; svgstore &#125; <span class="keyword">from</span> <span class="string">&#x27;./src/vite_plugins/svgstore&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// https://vitejs.dev/config/</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">defineConfig</span>(&#123;</span><br><span class="line">  <span class="attr">base</span>: <span class="string">&#x27;./&#x27;</span>,</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="title function_">vue</span>(),</span><br><span class="line">    <span class="title function_">vueJsx</span>(&#123;</span><br><span class="line">      <span class="attr">transformOn</span>: <span class="literal">true</span>,</span><br><span class="line">      <span class="attr">mergeProps</span>: <span class="literal">true</span></span><br><span class="line">    &#125;),</span><br><span class="line">    <span class="title function_">svgstore</span>()</span><br><span class="line">  ]</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="五、使用插件"><a href="#五、使用插件" class="headerlink" title="五、使用插件"></a>五、使用插件</h3><h4 id="1-在-main-ts-引入"><a href="#1-在-main-ts-引入" class="headerlink" title="1. 在 main.ts 引入"></a>1. 在 <code>main.ts</code> 引入</h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ... some codes</span></span><br><span class="line"><span class="comment">// import &#x27;...&#x27;</span></span><br><span class="line"><span class="comment">// import &#x27;...&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;@svgstore&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// ... some codes</span></span><br><span class="line"><span class="comment">// xxx()</span></span><br><span class="line"><span class="comment">// xxx()</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-使用-svg"><a href="#2-使用-svg" class="headerlink" title="2. 使用 svg"></a>2. 使用 <code>svg</code></h4><blockquote>
+<p>语法是：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">svg</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">use</span> <span class="attr">xlinkHref</span>=<span class="string">&#x27;#&lt;文件名&gt;&#x27;</span> &gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="title function_">Demo</span> = (<span class="params"></span>) =&gt; (</span><br><span class="line">  <span class="language-xml"><span class="tag">&lt;<span class="name">svg</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;<span class="name">use</span> <span class="attr">xlinkHref</span>=<span class="string">&#x27;#welcome_1&#x27;</span> /&gt;</span></span></span><br><span class="line"><span class="language-xml">  <span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="title class_">First</span>.<span class="property">displayName</span> = <span class="string">&#x27;Demo&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="最终效果"><a href="#最终效果" class="headerlink" title="最终效果"></a>最终效果</h2><blockquote>
+<p>是不是很爽滑？</p>
+</blockquote>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e19a9042033c4eda8d40dd8c0d8de2c3~tplv-k3u1fbpfcp-watermark.image" alt="540d1432c407cda85d883c34b731af6d.gif"></p>
+</div>
+   
+  <a id="older" class="blog-nav" href="/2022/06/15/http-client/">OLDER&nbsp;&gt;</a>
+   
+  <a id="newer" class="blog-nav" href="/2022/11/15/csr-ssr-ssg/">&lt;&nbsp;NEWER</a>
+   
+  <br />
+  <a href="/archives">cd ../</a>
+</div>
+
+        <div class="footer">
+  
+  <div class="footer-more">
+      
+  </div>
+  
+  <div class="footer-more">
+      
+  </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+
+
+    </div>
+  </body>
+</html>

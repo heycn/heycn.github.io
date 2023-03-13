@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="陈楠的博客" />
+  <meta name="author" content="陈楠" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      浅析「CSR、SSR、SSG 渲染原理」 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="head">
+        <div class="avatar">
+  <a href="/">
+    <img src="/images/avatar.png" alt="" />
+  </a>
+</div>
+
+        <p class="links">
+  
+    <a title="Blog" target="" href="/archives">
+      <i class="iconfont icon-emoji-friendly"></i>
+      Blog
+    </a>
+  
+    <a title="Docs" target="_blank" href="/">
+      <i class="iconfont icon-tags"></i>
+      Docs
+    </a>
+  
+    <a title="GitHub" target="_blank" href="https://github.com/heycn">
+      <i class="iconfont icon-github"></i>
+      GitHub
+    </a>
+  
+    <a title="WeChat" target="_blank" href="/images/wechat.jpg">
+      <i class="iconfont icon-wechat"></i>
+      WeChat
+    </a>
+  
+    <a title="Twitter" target="_blank" href="https://twitter.com/heycn_112">
+      <i class="iconfont icon-twitter"></i>
+      Twitter
+    </a>
+  
+    <a title="Email" target="" href="mailto:heycn@foxmail.com">
+      <i class="iconfont icon-envelope"></i>
+      Email
+    </a>
+  
+</p>
+
+      </div>
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [
+        ['$', '$'],
+        ['\\(', '\\)']
+      ]
+    }
+  }
+</script>
+
+<div class="post">
+  <h1 class="post-title">浅析「CSR、SSR、SSG 渲染原理」</h1>
+  <h3 class="date">Nov 15, 2022</h3>
+  <div class="content markdown-body"><h2 id="CSR-原理及问题"><a href="#CSR-原理及问题" class="headerlink" title="CSR 原理及问题"></a><strong>CSR</strong> 原理及问题</h2><h4 id="是什么"><a href="#是什么" class="headerlink" title="是什么"></a>是什么</h4><p>全称：Client Side Render（客户端渲染）</p>
+<p>特点：没有完整的 HTML 内容，依靠 JS 来完成整个页面的渲染</p>
+<p>在 Vue 或 React 作为目前前端热门框架的环境下，大部分的页面都是采用 CSR 的渲染模式</p>
+<p>例如，我们使用 <code>vite</code> 创建的 <code>React</code> 脚手架，html 文件的 body 里只有以下内容</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;root&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;module&quot;</span> <span class="attr">src</span>=<span class="string">&quot;/src/main.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>HTML 里面只有一个  <code>id=&quot;root&quot;</code> 的 <code>div</code>，里面并没有具体的页面内容，那页面是如何渲染出来的呢？</p>
+</blockquote>
+<p>答案是通过执行 JS 代码：<br>平时我们在用 React 开发页面的时候，实际上是在写 React 组件，并不是最后的 HTML 内容<br>在 js 执行的时候，React 框架底层会接收我们写的组件内容，然后再进行一系列的真实的 DOM 操作<br>只不过，这些操作，被 React <code>&quot;屏蔽&quot;</code> 掉了，但归根结底，还是需要依赖 js 的执行，来完成页面的渲染<br>这也是 CSR 的核心特征</p>
+<h4 id="存在的缺点"><a href="#存在的缺点" class="headerlink" title="存在的缺点"></a>存在的缺点</h4><ul>
+<li><strong>首屏加载慢</strong><ul>
+<li>页面需要 js 向服务端发送 HTTP 请求来获取数据，会带来 <code>网络 IO 的开销</code></li>
+<li>页面又需要 <code>依赖 js 来渲染</code>，这又是一部分运行时开销</li>
+</ul>
+</li>
+<li><strong>对 SEO 不友好</strong><ul>
+<li>因为搜索引擎的爬虫不会等待 js 执行完之后再去抓取页面的内容，一开始发现页面上没有有效的内容，那么就很难做 SEO 相关的优化了</li>
+</ul>
+</li>
+</ul>
+<h4 id="如何解决缺点"><a href="#如何解决缺点" class="headerlink" title="如何解决缺点"></a>如何解决缺点</h4><p>SSR 就是为了解决 CSR 所带来这一系列的问题</p>
+<h2 id="SSR"><a href="#SSR" class="headerlink" title="SSR"></a><strong>SSR</strong></h2><h4 id="是什么-1"><a href="#是什么-1" class="headerlink" title="是什么"></a>是什么</h4><p>全称：Server Side Render（服务端渲染）<br>特点：服务端返回完整的 HTML 内容</p>
+<p>也就是说，浏览器一开始拿到的，就是完整的 HTML，不需要 js 去调用 DOMApi 来去完成渲染</p>
+<h4 id="SSR-与-CSR-对比"><a href="#SSR-与-CSR-对比" class="headerlink" title="SSR 与 CSR 对比"></a>SSR 与 CSR 对比</h4><p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5ae7a8590214491bb912b64c4134352a~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<h6 id="CSR-流程"><a href="#CSR-流程" class="headerlink" title="CSR 流程"></a>CSR 流程</h6><ol>
+<li>首先下载 HTML 文本</li>
+<li>下载 JavaScript 脚本</li>
+<li>执行 JavaScript 脚本（包括数据获取，页面渲染比较重要的逻辑）</li>
+<li>页面准备就绪</li>
+</ol>
+<h6 id="SSR-流程"><a href="#SSR-流程" class="headerlink" title="SSR 流程"></a>SSR 流程</h6><p>服务端渲染里，浏览器首先会拿到 <code>完整的 HTML</code> 内容，也就是说：<code>组件的代码在服务端已经被渲染成了完整的 HTML 字符串</code>，浏览器就能直接完整地渲染这些内容了</p>
+<h4 id="存在的缺点-1"><a href="#存在的缺点-1" class="headerlink" title="存在的缺点"></a>存在的缺点</h4><p>SSR 无法交互</p>
+<p>SSR 是直接产出 HTML 的代码，DOM 元素事件绑定的逻辑仍然需要 JS 才能够完成，因此 <code>页面不可以交互</code></p>
+<h4 id="如何解决缺点-1"><a href="#如何解决缺点-1" class="headerlink" title="如何解决缺点"></a>如何解决缺点</h4><p>SSR 页面引入 <code>CSR的脚本</code>（同构）</p>
+<p>在实际的场景中，会在 SSR 页面中加入 CSR 的脚本，完成 DOM 的事件绑定</p>
+<p>这个完成事件绑定的过程，也被称为 <code>Hydration</code></p>
+<h2 id="SSG-原理"><a href="#SSG-原理" class="headerlink" title="SSG 原理"></a><strong>SSG</strong> 原理</h2><h4 id="是什么-2"><a href="#是什么-2" class="headerlink" title="是什么"></a>是什么</h4><p>全称：Static Site Generation（静态站点生成）</p>
+<p>特点：构建阶段的 SSR，build 过程中产出完整 HTML</p>
+<p>SSG 在构建的过程当中，也就是当执行 <code>npm build</code> 的时候，就可以产出完整的 HTML 内容，构建完成之后进行 HTML 部署，在生产环境下就不需要服务器的开发、运维相关的工作，研发和运维的成本会比 SSR 低一些</p>
+<h4 id="优劣势分析"><a href="#优劣势分析" class="headerlink" title="优劣势分析"></a>优劣势分析</h4><h6 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h6><ol>
+<li>服务器压力小</li>
+<li>继承 SSR <code>首屏性能</code> 以及 <code>SEO</code> 的优势</li>
+</ol>
+<h6 id="局限性"><a href="#局限性" class="headerlink" title="局限性"></a>局限性</h6><p>不适用于 <code>数据经常变化</code> 的场景</p>
+<h6 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h6><p>适用于 <code>数据变化频率较低</code> 的站点</p>
+<p>如：文档站、官网站点、博客等</p>
+<p>业界比较知名的 <a target="_blank" rel="noopener" href="https://vuepress.vuejs.org/zh/">VuePress</a>、<a target="_blank" rel="noopener" href="https://www.gatsbyjs.com/">Gatsby</a> … 等框架都是比较典型的 <code>SSG 方案</code></p>
+</div>
+   
+  <a id="older" class="blog-nav" href="/2022/09/01/vite-plugin-svg/">OLDER&nbsp;&gt;</a>
+   
+  <a id="newer" class="blog-nav" href="/2022/12/17/mini-redux/">&lt;&nbsp;NEWER</a>
+   
+  <br />
+  <a href="/archives">cd ../</a>
+</div>
+
+        <div class="footer">
+  
+  <div class="footer-more">
+      
+  </div>
+  
+  <div class="footer-more">
+      
+  </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="陈楠的博客" />
+  <meta name="author" content="陈楠" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      6000 字读完《JavaScript 语言精粹》之精华！ 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="head">
+        <div class="avatar">
+  <a href="/">
+    <img src="/images/avatar.png" alt="" />
+  </a>
+</div>
+
+        <p class="links">
+  
+    <a title="Blog" target="" href="/archives">
+      <i class="iconfont icon-emoji-friendly"></i>
+      Blog
+    </a>
+  
+    <a title="Docs" target="_blank" href="/">
+      <i class="iconfont icon-tags"></i>
+      Docs
+    </a>
+  
+    <a title="GitHub" target="_blank" href="https://github.com/heycn">
+      <i class="iconfont icon-github"></i>
+      GitHub
+    </a>
+  
+    <a title="WeChat" target="_blank" href="/images/wechat.jpg">
+      <i class="iconfont icon-wechat"></i>
+      WeChat
+    </a>
+  
+    <a title="Twitter" target="_blank" href="https://twitter.com/heycn_112">
+      <i class="iconfont icon-twitter"></i>
+      Twitter
+    </a>
+  
+    <a title="Email" target="" href="mailto:heycn@foxmail.com">
+      <i class="iconfont icon-envelope"></i>
+      Email
+    </a>
+  
+</p>
+
+      </div>
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [
+        ['$', '$'],
+        ['\\(', '\\)']
+      ]
+    }
+  }
+</script>
+
+<div class="post">
+  <h1 class="post-title">6000 字读完《JavaScript 语言精粹》之精华！</h1>
+  <h3 class="date">Feb 09, 2023</h3>
+  <div class="content markdown-body"><p>今天来阅读《JavaScript 语言精粹(修订版)》<br>不过这本书的内容并没有考虑 ES6 之后的东西，它是一个纯粹的 ES6 之前的 JavaScript 的精华</p>
+<p>虽然这本书放在现在来看是非常落后的，但还是非常特别适合初级中级前端工程师来进行阅读</p>
+<p>那么现在让我们开始吧</p>
+<h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><h2 id="1-1-为什么要使用-JavaScript"><a href="#1-1-为什么要使用-JavaScript" class="headerlink" title="1.1 为什么要使用 JavaScript"></a>1.1 为什么要使用 JavaScript</h2><p>因为你没得选，针对于当前外部浏览器，JavaScript 是唯一的一个编程语言</p>
+<p>同时它也是世界上最容易被轻视的语言之一</p>
+<h2 id="1-2-分析-JavaScript"><a href="#1-2-分析-JavaScript" class="headerlink" title="1.2 分析 JavaScript"></a>1.2 分析 JavaScript</h2><p>JavaScript 只花了 10 天的时间开发并且设计完成的，所以这门语言就包含了很多 <code>优秀</code> 的想法和 <code>糟糕</code> 的想法</p>
+<p>它是一个反差鲜明的语言，它的 <code>糟粕</code> 和 <code>精华</code> 一样显眼</p>
+<p>而针对这本书，主要是讲解 JavaScript 的精华部分</p>
+<h3 id="1-2-1-优秀的想法"><a href="#1-2-1-优秀的想法" class="headerlink" title="1.2.1 优秀的想法"></a>1.2.1 优秀的想法</h3><p>对于 JavaScript 而言，它里面的 <code>函数</code>、<code>弱类型</code>、<code>动态对象</code>、<code>对象字面量</code> 都可以认为是优秀的想法，也就是书中的精华</p>
+<h3 id="1-2-2-糟糕的想法"><a href="#1-2-2-糟糕的想法" class="headerlink" title="1.2.2 糟糕的想法"></a>1.2.2 糟糕的想法</h3><p>但是，也有一些糟糕的想法，也就是糟粕</p>
+<p>比如：基于全局变量的编程模型</p>
+<h1 id="二、核心"><a href="#二、核心" class="headerlink" title="二、核心"></a>二、核心</h1><blockquote>
+<p>JavaScript 的精华</p>
+</blockquote>
+<p>这本书的核心是 JavaScript 的精华部分，这个部分被分为了 6 块，分别是：<code>语法</code>、<code>对象</code>、<code>函数</code>、<code>继承</code>、<code>数组</code>、<code>方法</code></p>
+<h2 id="2-1-语法"><a href="#2-1-语法" class="headerlink" title="2.1 语法"></a>2.1 语法</h2><blockquote>
+<p>整个语法部分，其实都是 JS 里一些基础的语法</p>
+</blockquote>
+<h3 id="2-1-1-空白与注释"><a href="#2-1-1-空白与注释" class="headerlink" title="2.1.1 空白与注释"></a>2.1.1 空白与注释</h3><p>js 的注释分两种，一种是 <code>单行注释</code> 另一种是 <code>多行注释</code></p>
+<h4 id="单行注释"><a href="#单行注释" class="headerlink" title="单行注释"></a>单行注释</h4><blockquote>
+<p>单行注释在开发中经常用到</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 单行注释内容</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="多行注释"><a href="#多行注释" class="headerlink" title="多行注释"></a>多行注释</h4><blockquote>
+<p>而针对于多行注释来说，作者主要提供一种方式</p>
+</blockquote>
+<p>这种多行注释的形式，作者并不推荐在日常开发中使用</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> 多行注释内容</span></span><br><span class="line"><span class="comment"> 多行注释内容</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<p>但是，有一个多行注释作者并没有提到，看：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 多行注释内容</span></span><br><span class="line"><span class="comment"> * 多行注释内容</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+
+<p>这种多行注释多用于函数的注释之上</p>
+<h3 id="2-1-2-标识符"><a href="#2-1-2-标识符" class="headerlink" title="2.1.2 标识符"></a>2.1.2 标识符</h3><blockquote>
+<p>所谓的标识符，其实指的是 JavaScript 的一些保留字，这里的保留字非常的多，除了作者列出来的之外还有一些其他的，比如 <code>undefined</code>、<code>NaN</code>、<code>Infinity</code>…</p>
+</blockquote>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5b219dbbbb2441bd8d4211c27910d969~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<h3 id="2-1-3-数字"><a href="#2-1-3-数字" class="headerlink" title="2.1.3 数字"></a>2.1.3 数字</h3><blockquote>
+<p>只有一种数字类型</p>
+</blockquote>
+<p>对于其它编程语言，它们提供了非常多的数值类型，就以 Java 为例，Java 就提供了：<code>int</code>、<code>long</code>、<code>float</code> … 等</p>
+<p>但是针对于 JavaScript 来说，他只有一种数字类型 —— <code>number</code></p>
+<h3 id="2-1-4-字符串"><a href="#2-1-4-字符串" class="headerlink" title="2.1.4 字符串"></a>2.1.4 字符串</h3><p>书中主要从 <code>字面量</code> 和 <code>特性</code> 这两个方面去描述</p>
+<h4 id="字面量"><a href="#字面量" class="headerlink" title="字面量"></a>字面量</h4><p>所谓 <code>字面量</code> 指的就是快速创建某种类型的方式</p>
+<p>对于字符串来说，它有两种字面量的形式，分别是 <code>单引号</code> 和 <code>双引号</code></p>
+<p>在日常开发中，更加推荐使用 <code>单引号</code> 的形式声明一个字符串</p>
+<h4 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h4><p>这里的特性，作者主要列举了 3 点</p>
+<ol>
+<li>可拼接<br>可以用 <code>+</code> 来把多个字符串拼接在一起</li>
+<li>可 length<br>可以通过 <code>&#39;字符串&#39;.length()</code> 来获取字符串的长度</li>
+<li>有方法<br>JavaScript 里面的字符串拥有大量的方法</li>
+</ol>
+<h3 id="2-1-5-语句"><a href="#2-1-5-语句" class="headerlink" title="2.1.5 语句"></a>2.1.5 语句</h3><blockquote>
+<p>JavaScript 又被称作是一个 <code>图灵完备的编程语言</code>，那么所有 <code>图灵完备的编程语言</code> 就必然会具备变量的声明</p>
+</blockquote>
+<h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h4><ul>
+<li><p>编译单元<br>JavaScript 里的语句可以被放在 <code>&lt;script&gt;</code> 标签中</p>
+</li>
+<li><p>代码块<br>一对花括号中的一组内容就是一组语句</p>
+</li>
+</ul>
+<p>而书中把语句分成了 4 大块：<code>声明语句</code>、<code>条件语句</code>、<code>循环语句</code>、<code>强制跳转语句</code></p>
+<h4 id="声明语句"><a href="#声明语句" class="headerlink" title="声明语句"></a>声明语句</h4><blockquote>
+<p>用来声明变量的方式</p>
+</blockquote>
+<ol>
+<li><code>var</code> (书中只提到 <code>var</code>)<br>这是陈旧的声明方式，在现代实际开发中，我们都是使用以下两种方式 (ES6 之后)</li>
+<li><code>let</code><br>声明变量</li>
+<li><code>const</code><br>声明常量</li>
+</ol>
+<h4 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h4><p>条件语句主要有 2 个：<code>if</code>、<code>switch</code></p>
+<p>这两种语句，其实在很多编程语言中都是存在的</p>
+<p>不过在 JS 中，它的判断条件有些不太一样的地方：<strong>任何表达式，都可以作为判断条件，并且 <code>有</code> 且 <code>仅有</code> 6 个值在条件判断中会被判作为 <code>假</code></strong></p>
+<p>分别是：<code>false</code>、<code>null</code>、<code>undefined</code>、<code>空字符串</code>、<code>0</code>、<code>NaN</code></p>
+<h4 id="循环语句"><a href="#循环语句" class="headerlink" title="循环语句"></a>循环语句</h4><p>循环语句主要有 3 个</p>
+<ol>
+<li><code>for</code><br>普通：<code>for ( 初始化从句; 条件从句; 增量从句 )</code><br>for in: <code>for ( key in object )</code></li>
+<li><code>while</code></li>
+<li><code>do while</code> (结合 <code>while</code> 使用)</li>
+</ol>
+<h4 id="强制跳转语句"><a href="#强制跳转语句" class="headerlink" title="强制跳转语句"></a>强制跳转语句</h4><p>会强制更改程序执行顺序的语句</p>
+<p>下面的这些语句，在日常开发中也是会被经常使用到的</p>
+<ol>
+<li><code>break</code>：可以让程序退出 <code>循环</code> 或 <code>switch</code></li>
+<li><code>continue</code> (书中没提到，作者认为这是一个糟粕)：终止当前循环</li>
+<li><code>return</code>：中断函数的执行，并且返回对应的值 (默认返回 <code>undefined</code>)</li>
+<li><code>throw</code>：抛出异常</li>
+<li><code>try... catch...</code>：捕获异常，让程序强制跳转到其它逻辑里</li>
+</ol>
+<h3 id="2-1-6-表达式"><a href="#2-1-6-表达式" class="headerlink" title="2.1.6 表达式"></a>2.1.6 表达式</h3><p>一组代码的集合，并且返回一个值</p>
+<ol>
+<li>算数：如 <code>123</code></li>
+<li>字符串：如 <code>你好</code></li>
+<li>逻辑值：通过逻辑运算符得到一个 <code>boolean</code> 类型的值</li>
+<li>左值表达式：<code>const number = 1</code></li>
+<li>基本表达式：基本的关键字和一般表达式</li>
+</ol>
+<h3 id="2-1-7-字面量"><a href="#2-1-7-字面量" class="headerlink" title="2.1.7 字面量"></a>2.1.7 字面量</h3><p>按照规定规格创建新对象的表示法</p>
+<p>如：<code>const array = [1,2,3]</code>、<code>const obj = &#123;name: &#39;heycn&#39;&#125;</code></p>
+<p>而不需像其它语言那样需要 <code>new</code> 一下</p>
+<h3 id="2-1-8-函数"><a href="#2-1-8-函数" class="headerlink" title="2.1.8 函数"></a>2.1.8 函数</h3><p>作者在语法章节里讲得比较粗糙，而且在后面 <code>函数</code> 这个单独的章节里面都有，所以到下面 <code>函数</code> 这个大章节的时候再统一说</p>
+<h2 id="2-2-对象"><a href="#2-2-对象" class="headerlink" title="2.2 对象"></a>2.2 对象</h2><p>对象在 JavaScript 里是一个非常特殊的概念</p>
+<h3 id="2-2-1-定义"><a href="#2-2-1-定义" class="headerlink" title="2.2.1 定义"></a>2.2.1 定义</h3><p>在 JavaScript 里，数据类型主要被分为两种：<code>简单的数据类型</code>、<code>复杂的数据类型</code></p>
+<h4 id="简单的数据类型"><a href="#简单的数据类型" class="headerlink" title="简单的数据类型"></a>简单的数据类型</h4><ol>
+<li>number</li>
+<li>string</li>
+<li>boolean</li>
+<li>undefined</li>
+<li>symbol (es6 之后)</li>
+<li>bigint (es6 之后)</li>
+</ol>
+<h4 id="复杂的数据类型"><a href="#复杂的数据类型" class="headerlink" title="复杂的数据类型"></a>复杂的数据类型</h4><p>除了 <code>简单的数据类型</code> 之外，其他的都是 <code>复杂的数据类型</code></p>
+<p>在 JavaScript 里，所有的复杂类型，都统称为 <code>对象</code></p>
+<ol>
+<li>数组</li>
+<li>函数</li>
+<li>正则表达式</li>
+<li>对象</li>
+<li>… 等等</li>
+</ol>
+<h3 id="2-2-2-字面量"><a href="#2-2-2-字面量" class="headerlink" title="2.2.2 字面量"></a>2.2.2 字面量</h3><p>在之前已经说过了</p>
+<p><code>const obj = &#123;name: &#39;heycn&#39;&#125;</code></p>
+<h3 id="2-2-3-索引与更新"><a href="#2-2-3-索引与更新" class="headerlink" title="2.2.3 索引与更新"></a>2.2.3 索引与更新</h3><p>对于对象而言，它是可以去获取值，我们把获取值称之为 <code>检索</code></p>
+<p>对象也可以去修改值，叫做 <code>更新</code></p>
+<ol>
+<li><code>.</code> 语法：<code>xxx.yyy</code></li>
+<li><code>[]</code> 语法：<code>xxx[yyy]</code></li>
+</ol>
+<h3 id="2-2-4-原型"><a href="#2-2-4-原型" class="headerlink" title="2.2.4 原型"></a>2.2.4 原型</h3><p>作者在这里讲的比较粗糙，而且和下面的 <code>继承</code> 所涉及到东西有很大的相似性，所以 <code>原型</code> 就放在下面继承说</p>
+<h3 id="2-2-5-反射"><a href="#2-2-5-反射" class="headerlink" title="2.2.5 反射"></a>2.2.5 反射</h3><p>其实在 JavaScript 里，是没有 <code>反射</code> 的一个明确定义的，我觉得是这本书在翻译时的一个问题，或者是作者对这个词汇进行一个单独的称呼</p>
+<ol>
+<li><strong>typeof</strong>：判断变量类型<br><code>undefined</code><br><code>boolean</code><br><code>number</code><br><code>bigint</code><br><code>string</code><br><code>symbol</code><br><code>function</code><br><code>object</code></li>
+<li><strong>hasOwnProperty</strong>：去判断当前对象自身属性中是否具有指定的属性，具有的话返回 <code>true</code>，否则返回 <code>false</code></li>
+</ol>
+<h3 id="2-2-6-枚举"><a href="#2-2-6-枚举" class="headerlink" title="2.2.6 枚举"></a>2.2.6 枚举</h3><p>其实在 JS 中，也没有 <code>枚举</code> 这么一个概念，大家把它当做是作者的一个称呼就可以了</p>
+<p>而书中的 <code>枚举</code> 主要是：遍历一个对象，并且获取该对象自身的所有属性</p>
+<p>我们可以使用 <code>forin</code> 进行遍历，在遍历的过程中，我们可以借助 <code>hasOwnProperty</code> 这个方法来去判断当前的属性是否是对象自身的属性</p>
+<h3 id="2-2-7-删除"><a href="#2-2-7-删除" class="headerlink" title="2.2.7 删除"></a>2.2.7 删除</h3><p>针对于对象属性而言，它是可以被删除的，可以通过 <code>delete</code> 关键字</p>
+<p><code>delete obj.key</code></p>
+<h2 id="2-3-函数"><a href="#2-3-函数" class="headerlink" title="2.3 函数"></a>2.3 函数</h2><p>函数是整本书中最大的一个章节，不过作者和在写其它章节的地方一样，存在一些描述上的偏差</p>
+<p>同时它也有很多精华</p>
+<h3 id="2-3-1-精华"><a href="#2-3-1-精华" class="headerlink" title="2.3.1 精华"></a>2.3.1 精华</h3><p>在函数这章的开篇，有一句话，<strong>它描述了整个编程的本质</strong>：所谓编程，就是将一组需求分解成一组函数与数据结构的技能</p>
+<p>这句话，把函数的作用推到了非常重要的位置，其实事实也是如此，所以书中花费了大量的时间去讲这个函数</p>
+<h3 id="2-3-2-函数对象"><a href="#2-3-2-函数对象" class="headerlink" title="2.3.2 函数对象"></a>2.3.2 函数对象</h3><p>在之前说过，除了基本的数据类型之外，其他的都是对象，所以 <strong>函数本质上就是一个对象</strong></p>
+<p>只不过呢，对于函数这个东西，它有一个 <strong>调用</strong> 属性，可以被直接调用</p>
+<h3 id="2-3-3-函数字面量"><a href="#2-3-3-函数字面量" class="headerlink" title="2.3.3 函数字面量"></a>2.3.3 函数字面量</h3><p>如果说想去定义函数的话，我们可以使用函数字面量的方式去定义</p>
+<p>所谓函数字面量，就是我们平时定义一个函数的方式，一共有两种: <strong>命名函数</strong> 和 <strong>匿名函数</strong></p>
+<h4 id="命名函数"><a href="#命名函数" class="headerlink" title="命名函数"></a>命名函数</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">foo</span>(<span class="params">a, b</span>) &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="匿名函数"><a href="#匿名函数" class="headerlink" title="匿名函数"></a>匿名函数</h4><p>通过一个变量去接收一个函数</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> foo = <span class="keyword">function</span> (<span class="params">a, b</span>) &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="它们都包含了以下几个部分"><a href="#它们都包含了以下几个部分" class="headerlink" title="它们都包含了以下几个部分"></a>它们都包含了以下几个部分</h4><ol>
+<li><strong>保留字</strong>：<code>function</code></li>
+<li><strong>函数名</strong>：<code>foo(可省略)</code></li>
+<li><strong>参数</strong>：<code>(p1, p2...)</code></li>
+<li><strong>语句</strong>：<code>&#123; ... 代码块 ... &#125;</code></li>
+</ol>
+<h3 id="2-3-4-调用"><a href="#2-3-4-调用" class="headerlink" title="2.3.4 调用"></a>2.3.4 调用</h3><p>在调用函数中，书中分成了 2 部分去说</p>
+<h4 id="函数可以调用其它函数"><a href="#函数可以调用其它函数" class="headerlink" title="函数可以调用其它函数"></a>函数可以调用其它函数</h4><p>这个只要大家使用过编程语言，都应该知道，所以这里就不多说了</p>
+<p>在这种情况下，它会暂停当前函数执行，传递控制权和参数给新函数，新函数执行完毕后，再将返回值返回给原函数</p>
+<h4 id="附加参数"><a href="#附加参数" class="headerlink" title="附加参数"></a>附加参数</h4><p>在 JavaScript 中，存在两个附加参数，<code>this</code> 和 <code>arguments</code></p>
+<h5 id="this"><a href="#this" class="headerlink" title="this"></a><code>this</code></h5><p><code>this</code> 引用的值 <strong>取决于函数的调用模式</strong></p>
+<p>书中将调用的模式分成了 4 大类</p>
+<ol>
+<li>方法调用模式</li>
+<li>函数调用模式</li>
+<li>构造器调用模式</li>
+<li><code>apply</code> 调用模式：<code>apply</code>、<code>call</code>、<code>bind</code></li>
+</ol>
+<p>在前 3 种调用模式下，<code>this</code> 的引用是函数的调用方</p>
+<p>而在 <code>apply</code> 调用模式下，<code>this</code> 所引用的值可以被设置为指定的参数</p>
+<h5 id="arguments：当前函数得到的所有实际参数"><a href="#arguments：当前函数得到的所有实际参数" class="headerlink" title="arguments：当前函数得到的所有实际参数"></a><code>arguments</code>：当前函数得到的所有实际参数</h5><h3 id="2-3-5-构造器调用模式"><a href="#2-3-5-构造器调用模式" class="headerlink" title="2.3.5 构造器调用模式"></a>2.3.5 构造器调用模式</h3><p>函数除了可以被调用之外，还可以被当作构造器来使用，书中主要去明确了 4 个方向</p>
+<ol>
+<li>JavaScript 是一门基于原型继承的语言：对象可以直接从其它对象中继承属性</li>
+<li>构造器本质上就是一个函数</li>
+<li>通过 <code>new</code> 来调用</li>
+<li>约定首字母应该大写</li>
+</ol>
+<h3 id="2-3-6-apply-调用模式"><a href="#2-3-6-apply-调用模式" class="headerlink" title="2.3.6 apply 调用模式"></a>2.3.6 <code>apply</code> 调用模式</h3><p>是由 3 个方法组成的：<code>apply</code>、<code>call</code>、<code>bind</code>，它们的作用都是为了改变 <code>this</code> 所引用的值，只是参数的传递方式不同</p>
+<h3 id="2-3-7-参数"><a href="#2-3-7-参数" class="headerlink" title="2.3.7 参数"></a>2.3.7 参数</h3><p>在这个小节种，同样提到了 <code>arguments</code>，它是一个类数组对象 (伪数组)，可以通过 <code>arguments[i]</code> 来访问参数，主要就是用来获取该函数所有的实际参数</p>
+<h3 id="2-3-8-返回"><a href="#2-3-8-返回" class="headerlink" title="2.3.8 返回"></a>2.3.8 返回</h3><p>函数的返回值，主要有 3 块</p>
+<ol>
+<li>函数是必然会有一个返回值的，即使你没有写 <code>return</code>，它也会默认返回 <code>undefined</code></li>
+<li><code>return</code> 语句可以让函数提前返回指定的值，并且中止执行</li>
+<li>配合 <code>new</code> 来使用，可以返回一个 <code>this</code> 引用的对象</li>
+</ol>
+<h3 id="2-3-9-异常"><a href="#2-3-9-异常" class="headerlink" title="2.3.9 异常"></a>2.3.9 异常</h3><p>使用 <code>throw</code> 语句来抛出异常，中止函数的执行，通过 <code>try</code>、<code>catch</code>、<code>finally</code> 来捕获异常</p>
+<h3 id="2-3-10-扩充类型的功能"><a href="#2-3-10-扩充类型的功能" class="headerlink" title="2.3.10 扩充类型的功能"></a>2.3.10 扩充类型的功能</h3><p>作者把所有基于原型的继承叫做 <strong>扩充类型的功能</strong>：<code>Function.prototype.method</code></p>
+<h3 id="2-3-11-递归"><a href="#2-3-11-递归" class="headerlink" title="2.3.11 递归"></a>2.3.11 递归</h3><p><strong>直接或间接调用自身的函数</strong> 称为递归函数，是一种解决问题的方法，而不是一种编程技巧；它把一个复杂问题分解为一组相似的子问题，每一个都用一个寻常解去解决</p>
+<h3 id="2-3-12-作用域"><a href="#2-3-12-作用域" class="headerlink" title="2.3.12 作用域"></a>2.3.12 作用域</h3><p>这小节是整个书中明显有巨大局限性的一个地方，因为作者很多观念都是基于 ES6 之前去说的，所以目前这个小节的内容就显得有些过时了</p>
+<h3 id="2-3-13-闭包"><a href="#2-3-13-闭包" class="headerlink" title="2.3.13 闭包"></a>2.3.13 闭包</h3><p><a target="_blank" rel="noopener" href="https://juejin.cn/post/7070375769117523998">我对闭包的理解</a></p>
+<p>一个函数访问了函数外的变量，就形成了闭包</p>
+<p>「闭包」指的是行为，是一种语法特性，而不是语法结构</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> add1 = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">let</span> count</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">function</span> <span class="title function_">add2</span>(<span class="params"></span>) &#123;</span><br><span class="line">    count += <span class="number">1</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3-14-回调"><a href="#2-3-14-回调" class="headerlink" title="2.3.14 回调"></a>2.3.14 回调</h3><blockquote>
+<p>这种方式在日常开发中会经常遇到</p>
+</blockquote>
+<p>函数可以作为参数传递给另一个函数使用，这个函数就叫做回调函数</p>
+<h3 id="2-3-15-模块"><a href="#2-3-15-模块" class="headerlink" title="2.3.15 模块"></a>2.3.15 模块</h3><p>结合闭包和回调，作者提出了 <code>模块</code> 的概念</p>
+<ul>
+<li>产生：当使用函数和闭包的时候，其实就可以构造出一个模块</li>
+<li>定义：模块式一个提供接口却隐藏状态与实现的函数或对象</li>
+<li>好处：通过使用函数产生模块，几乎可以完全摒弃全局变量的使用，从而缓解 JavaScript 最为糟糕的特性之一所带来的影响</li>
+</ul>
+<p>我这里有个例子：</p>
+<ul>
+<li>假设我们现在要做一个游戏，叫魂斗罗</li>
+<li>那么魂斗罗每人有 3 条命，那声明一个全部变量(3 条命)</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">window</span>.<span class="property">lives</span> = <span class="number">3</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">这里写游戏代码</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>那这个游戏代码还能去写吗？不可以</li>
+<li>如果你不小心写了 window.lives &#x3D; -100，那就完了？你的游戏就有 BUG 了！</li>
+<li>所以你把 lives 作为一个全部变量是很危险的，所以我们需要把它 ‘藏’ 在一个地方，然后只让他加一条命或减一条命，这样会更安全一点</li>
+<li>那要怎么做？那就搞一个局部变量呗。怎么做呢？</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="keyword">let</span> lives = <span class="number">3</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">这里是游戏代码</span></span><br><span class="line"><span class="comment">lives = -100</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>这样你就访问不到 lives 了，你游戏代码改成 -100，没用！</li>
+<li>但这我也访问不了，我想知道我现在有几条命，也不知道呀，怎么办？</li>
+<li>给几个接口嘛，我写几个接口：获取生命，减少生命，增加生命</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="keyword">let</span> lives = <span class="number">3</span></span><br><span class="line">  <span class="variable language_">window</span>.<span class="property">getLives</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">// 获取生命</span></span><br><span class="line">    <span class="keyword">return</span> lives</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="variable language_">window</span>.<span class="property">die</span> = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">//减少生命</span></span><br><span class="line">    lives -= <span class="number">1</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="variable language_">window</span>.<span class="property">award</span> = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 增加生命</span></span><br><span class="line">    lives += <span class="number">1</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">这里是游戏代码</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="comment">// 诶？这不就是形成闭包了嘛？</span></span><br><span class="line"><span class="comment">// 但是重点我们不是这个闭包，而是获取这些接口，那怎么获取呢？看下面</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">window</span>.<span class="title function_">getLives</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment">// 所以实现了什么效果：你不能直接访问 lives，但可以使用我给你提供的接口来访问 lives</span></span><br></pre></td></tr></table></figure>
+
+<p>所以作者所说到的模块，我认为是一个作用域</p>
+<h3 id="2-3-16-级联"><a href="#2-3-16-级联" class="headerlink" title="2.3.16 级联"></a>2.3.16 级联</h3><p>这里的级联，我理解为 <code>链式调用</code></p>
+<h3 id="2-3-17-柯里化"><a href="#2-3-17-柯里化" class="headerlink" title="2.3.17 柯里化"></a>2.3.17 柯里化</h3><p>把函数与传递给它的参数相结合，产生一个新的函数</p>
+<p>而在我们普遍的记忆中，我们是这样理解的：科利华是一种函数的转换，它是指将一个函数从可调用的 <code>foo(p1, p2, p3)</code> 转换为可调用的 <code>foo(p1)(p2)(p3)</code></p>
+<h3 id="2-3-17-记忆"><a href="#2-3-17-记忆" class="headerlink" title="2.3.17 记忆"></a>2.3.17 记忆</h3><p>函数可以将先前操作的结果记录在某个对象里，从而避免无谓的重复计算</p>
+<h2 id="2-4-继承"><a href="#2-4-继承" class="headerlink" title="2.4 继承"></a>2.4 继承</h2><p>继承这一章的内容不算特别得多，至少对于函数来说是这样的<br>书中并没有详细地去讲解 JavaScript 中所有关于继承的方式以及代码，更多的是从理念上去讲解</p>
+<p>同时要注意，它依然包含 <strong>很大的落后性</strong></p>
+<h3 id="2-4-1-精华"><a href="#2-4-1-精华" class="headerlink" title="2.4.1 精华"></a>2.4.1 精华</h3><p>JavaScript 是弱类型的语言，提供了多种继承的方式，而非传统的类继承</p>
+<p>注意：在 ES6 之后提供了 <code>class</code> 关键字，但是它只是语法糖，本质上还是原型继承</p>
+<h3 id="2-4-2-伪类"><a href="#2-4-2-伪类" class="headerlink" title="2.4.2 伪类"></a>2.4.2 伪类</h3><p>JavaScript 中并不存在类的概念，而是以伪类（首字母大写的普通函数）的形式进行呈现</p>
+<h3 id="2-4-3-对象说明符"><a href="#2-4-3-对象说明符" class="headerlink" title="2.4.3 对象说明符"></a>2.4.3 对象说明符</h3><p>作者提出：有时候，构造器要接受一大串参数。这可能令人烦恼，因为要记住参数的顺序非常困难。在这种情况下，如果我们在编写构造器时让它接受一个简单的对象说明符，可能会更加友好。</p>
+<p>我翻译为：顶一个函数接受多个参数时，记住参数的顺序非常困难，所以我们可以使用对象来传递参数，这样就不用记住参数的顺序了</p>
+<p>所以，与其这样写</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> myObject = <span class="title function_">maker</span>(f, l, m, c, s)</span><br></pre></td></tr></table></figure>
+
+<p>不如这样写</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> myObject = <span class="title function_">maker</span>(&#123;</span><br><span class="line">  <span class="attr">first</span>: f,</span><br><span class="line">  <span class="attr">last</span>: l,</span><br><span class="line">  <span class="attr">middle</span>: m,</span><br><span class="line">  <span class="attr">state</span>: s,</span><br><span class="line">  <span class="attr">city</span>: c</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-4-4-原型"><a href="#2-4-4-原型" class="headerlink" title="2.4.4 原型"></a>2.4.4 原型</h3><p>原型是继承中非常重要的一个概念，但是书中的内容并不是很详细，只是简单地讲解了一下，而是明确了两点</p>
+<ol>
+<li>JavaScript 中基于原型进行继承：一个新对象可以继承一个旧对象的属性</li>
+<li>差异化继承：\<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> person = &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&#x27;张三&#x27;</span>,</span><br><span class="line">  <span class="attr">age</span>: <span class="number">18</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> newPerson = <span class="title class_">Object</span>.<span class="title function_">create</span>(person)</span><br><span class="line">newPerson.<span class="property">name</span> = <span class="string">&#x27;李四&#x27;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="2-4-5-函数化"><a href="#2-4-5-函数化" class="headerlink" title="2.4.5 函数化"></a>2.4.5 函数化</h3><p>JavaScript 中继承的模式会导致没有私有变量，比如上面的例子中，<code>person</code> 无法具备私有变量</p>
+<p>作者通过一段代码来描述了如何在原型继承的模式下，让继承具备私有变量</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> constructor = <span class="keyword">function</span> (<span class="params">spec， my</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> that, 其他的私有实例变量;</span><br><span class="line">  my = my || &#123;&#125;;</span><br><span class="line"></span><br><span class="line">  把共享的变量和函数添加到 my 中</span><br><span class="line"></span><br><span class="line">  that = 一个新对象</span><br><span class="line"></span><br><span class="line">  添加给 that 的特权方法</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> that;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>上面这个代码难以理解，但是现在有了 <code>class</code> 的这个概念，同时也有 TypeScript 这样的语言，而且现在有更简单的方式去定义私有变量，所以上面这段代码了解的意义不大</p>
+<h3 id="2-4-1-部件-对象的属性或方法"><a href="#2-4-1-部件-对象的属性或方法" class="headerlink" title="2.4.1 部件 (对象的属性或方法)"></a>2.4.1 部件 (对象的属性或方法)</h3><p>这其实是作者提出的一个概念</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> eventuality = <span class="keyword">function</span> (<span class="params">that</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> registry = &#123;&#125;</span><br><span class="line">  <span class="comment">// 部件1</span></span><br><span class="line">  that.<span class="property">fire</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;fire&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 部件2</span></span><br><span class="line">  that.<span class="property">on</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;on&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> that</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> person = &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&#x27;张三&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">eventuality</span>(person)</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-5-数组"><a href="#2-5-数组" class="headerlink" title="2.5 数组"></a>2.5 数组</h2><h3 id="2-5-1-定义"><a href="#2-5-1-定义" class="headerlink" title="2.5.1 定义"></a>2.5.1 定义</h3><p>作者把传统的数组和 JavaScript 的数组进行了对比</p>
+<h4 id="传统的数组"><a href="#传统的数组" class="headerlink" title="传统的数组"></a>传统的数组</h4><p>数组是一段线性分配的内存，它通过整数计算偏移并访问其中的元素</p>
+<h4 id="JavaScript-的-数组"><a href="#JavaScript-的-数组" class="headerlink" title="JavaScript 的 数组"></a>JavaScript 的 数组</h4><ul>
+<li>JS 中并不存在数组一样的数据结构</li>
+<li>JS 提供的是类数组特性的对象，也就是说 JS 中，数组的本质是对象</li>
+</ul>
+<p>所以 JS 中，数组其实是长得像数组、有数组结构的对象</p>
+<h3 id="2-5-2-数组字面量"><a href="#2-5-2-数组字面量" class="headerlink" title="2.5.2 数组字面量"></a>2.5.2 数组字面量</h3><p>提供了非常方便的创建新数组的表示方法</p>
+<p><code>const array = [1, 2, 3]</code></p>
+<h3 id="2-5-3-长度"><a href="#2-5-3-长度" class="headerlink" title="2.5.3 长度"></a>2.5.3 长度</h3><p>每个数组都可以使用 <code>length</code> 属性来获取数组的长度</p>
+<p>不过 JavaScript 和大多数语言不同，JavaScript 数组的 <code>length</code> 是没有上界的。如果你用大于或等于当前 <code>length</code> 数字作为下标来存储一个元素，那么 <code>length</code> 值会被增大以容纳新元素，不会发生数组越界错误。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> array = []</span><br><span class="line">array.<span class="property">length</span> <span class="comment">//0</span></span><br><span class="line"></span><br><span class="line">array[<span class="number">100</span>] = <span class="number">1</span></span><br><span class="line">array.<span class="property">length</span> <span class="comment">// 101</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-5-4-删除"><a href="#2-5-4-删除" class="headerlink" title="2.5.4 删除"></a>2.5.4 删除</h3><p>书中提供两种方式</p>
+<ol>
+<li><code>delete</code>：因为数组本质是对象，所以也可以通过 <code>delete</code> 删除（但是不推荐，这样会在数组中留下一个空洞）</li>
+<li><code>splice</code></li>
+</ol>
+<h3 id="2-5-5-枚举"><a href="#2-5-5-枚举" class="headerlink" title="2.5.5 枚举"></a>2.5.5 枚举</h3><p>其实就是遍历，书中主要提到了 2 种</p>
+<ol>
+<li><code>for...in...</code>：无法保证顺序</li>
+<li>常规的 <code>for</code> 循环</li>
+</ol>
+<h3 id="2-5-6-容易混淆的地方"><a href="#2-5-6-容易混淆的地方" class="headerlink" title="2.5.6 容易混淆的地方"></a>2.5.6 容易混淆的地方</h3><p>书中核心提到两点</p>
+<ol>
+<li>对象与数组的率意混淆：当属性名是小而连续的整数时，应该定义数组，否则都是对象</li>
+<li>区别数组与对象：<code>typeof</code> 不可用：<code>typeof</code> 运算符报告数组的类型是 <code>object</code></li>
+</ol>
+<p>我们可以定义自己的 <code>is_array</code> 函数来弥补这个缺陷</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> is_array = <span class="keyword">function</span> (<span class="params">value</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> value &amp;&amp;</span><br><span class="line">    <span class="keyword">typeof</span> value === <span class="string">&#x27;object&#x27;</span> &amp;&amp;</span><br><span class="line">    value.<span class="property">constructor</span> === <span class="title class_">Array</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>不过我们现在可以使用 <code>instanceof</code> 来区分</p>
+<h3 id="2-5-7-方法"><a href="#2-5-7-方法" class="headerlink" title="2.5.7 方法"></a>2.5.7 方法</h3><p>数组中提供了许多方法，这些方法是被存放在 <code>Array.prototype</code> 中的函数</p>
+<h3 id="2-5-8-指定初始值"><a href="#2-5-8-指定初始值" class="headerlink" title="2.5.8 指定初始值"></a>2.5.8 指定初始值</h3><ol>
+<li><p>JavaScript 的数组通常不会预设值，如果通过 <code>[]</code> 得到一个新数组，它将是空的</p>
+</li>
+<li><p>JavaScript 里没有多维数组，但是它支持 <code>元素为数组的数组</code></p>
+</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> array = [</span><br><span class="line">  [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>],</span><br><span class="line">  [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>],</span><br><span class="line">  [<span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>]</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-6-方法"><a href="#2-6-方法" class="headerlink" title="2.6 方法"></a>2.6 方法</h2><h3 id="2-6-1-定义"><a href="#2-6-1-定义" class="headerlink" title="2.6.1 定义"></a>2.6.1 定义</h3><p>当一个函数被保存为对象的一个属性时，那么这个函数就叫做方法</p>
+<h3 id="2-6-2-四大类"><a href="#2-6-2-四大类" class="headerlink" title="2.6.2 四大类"></a>2.6.2 四大类</h3><p>这个部分就类似于 <code>Api</code> 的分类，这里就不再赘述了，与其看作者在书中写的，不如直接看 <code>MDN</code> 上的</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function">Function</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></p>
+</li>
+</ul>
+<h1 id="三、其它"><a href="#三、其它" class="headerlink" title="三、其它"></a>三、其它</h1><p>除了上面提到的大部分精华之外，作者在书中也提到了其他的东西</p>
+<ul>
+<li>正则表达式：并非 JavaScript 特性，而是一门语言的语法规范</li>
+<li>代码风格：作者对 JavaScript 语法规范的理解，但并不完全适合于国内环境</li>
+<li>优美的特性：我们喜欢简单，追求简洁易用，懂事当产品缺乏这种特性时，就需要自己去创造它</li>
+</ul>
+<h1 id="四、附录"><a href="#四、附录" class="headerlink" title="四、附录"></a>四、附录</h1><blockquote>
+<p>JavaScript 的糟粕</p>
+</blockquote>
+<h2 id="4-1-毒瘤"><a href="#4-1-毒瘤" class="headerlink" title="4.1 毒瘤"></a>4.1 毒瘤</h2><ol>
+<li>全局变量：中大型项目中，全局变量可以被任意修改，会使得程序的行为变得极度复杂</li>
+<li>作用域：无块级作用域（<code>ES6</code> 之前）</li>
+<li>自动插入分号：不合时宜的自动插入</li>
+<li>保留字：大量的保留字不可以被用作变量名</li>
+<li>unicode：<code>unicode</code> 把一对字符视为一个单一的字符，而JavaScript 认为一对字符是两个不同的字符</li>
+<li>typeof：<code>typeof</code> 的返回总是很奇怪</li>
+<li>parseInt：遇到非数字的时候会停止解析，而不是抛出一个错误</li>
+<li>+：<code>+</code> 既可以让数字相加，也可以链接字符串</li>
+<li>浮点数：二进制的浮点数不能正确的处理十进制的小数（0.1 + 0.2 不等于 0.3）</li>
+<li>NaN：<code>NaN</code> 表示不是一个数字，同时它的一些运算也让人感到奇怪\<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typeof</span> <span class="title class_">NaN</span> === <span class="string">&#x27;number&#x27;</span> <span class="comment">// true</span></span><br><span class="line"><span class="title class_">NaN</span> === <span class="title class_">NaN</span> <span class="comment">// false</span></span><br><span class="line"><span class="title class_">NaN</span> !== <span class="title class_">NaN</span> <span class="comment">// true</span></span><br></pre></td></tr></table></figure></li>
+<li>伪数组：JavaScript 中没有真正的数组，却又存在伪数组的概念</li>
+<li>假值：\<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">0 的类型是 number</span><br><span class="line">NaN 的类型是 number</span><br><span class="line">&#x27;&#x27; 的类型是 string</span><br><span class="line">false 的类型是 boolean</span><br><span class="line">null 的类型是 object</span><br><span class="line">undefined 的类型是 undefined</span><br></pre></td></tr></table></figure></li>
+<li>hasOwnProperty：<code>hasOwnProperty</code> 是一个方法而不是一个运算符，所以在任何对象中，它可以被替换掉</li>
+<li>对象：JavaScript 中的对象永远不会是真的空对象。因为它们可以从原型链中取得成员属性</li>
+</ol>
+<h2 id="4-2-糟粕"><a href="#4-2-糟粕" class="headerlink" title="4.2 糟粕"></a>4.2 糟粕</h2><p>作者提出了 JavaScript 一些有问题的特性，但是我们很容易就可以避免它们</p>
+<ol>
+<li>&#x3D;&#x3D;：不判断类型，所以尽量不要使用它</li>
+<li>with：改变一段语句的作用域链</li>
+<li>eval：传递字符串给 JavaScript 编译器，会使得代码更加难以阅读</li>
+<li>continue：作者发现移除 <code>continue</code> 之后，性能会得到改善</li>
+<li>switch：必须明确中断 <code>case</code>，否则会穿越到下一个 <code>case</code> 中</li>
+<li>缺少块的语句（在 ES6 之后已经可以提供块级作用域了）</li>
+<li>++ –：这两个运算符鼓励了一种不够严谨的编程风格</li>
+<li>位运算符：JavaScript 执行环境一般不接触硬件，所以执行非常慢</li>
+<li>function 语句对比 function 表达式：多种定义方式令人困惑<br>10.类型的包装对象：你应该从来没有使用过 new Boolean()，所以作者认为，这是完全没有必要，并且令人困惑的语法</li>
+</ol>
+<h1 id="五、总结"><a href="#五、总结" class="headerlink" title="五、总结"></a>五、总结</h1><blockquote>
+<p>分析这本书针对国内当下开发者的一个优缺点</p>
+</blockquote>
+<h2 id="5-1-优点"><a href="#5-1-优点" class="headerlink" title="5.1 优点"></a>5.1 优点</h2><ol>
+<li>体量小</li>
+<li>初、中级开发者可以看懂，可以快速在 JavaScript 这门语言取其的精华，去其糟粕</li>
+</ol>
+<h2 id="5-1-缺点"><a href="#5-1-缺点" class="headerlink" title="5.1 缺点"></a>5.1 缺点</h2><ol>
+<li>内容篇旧，针对 ES6 之前的语法</li>
+<li>直译：大部分是直译，有些地方翻译的不够准确</li>
+<li>大部分为作者主观表述，需要大家客观对待</li>
+</ol>
+<p>感谢阅读，下次见 :)</p>
+</div>
+   
+  <a id="older" class="blog-nav" href="/2022/12/29/event-hub/">OLDER&nbsp;&gt;</a>
+   
+  <a id="newer" class="blog-nav" href="/2023/02/09/method-chaining/">&lt;&nbsp;NEWER</a>
+   
+  <br />
+  <a href="/archives">cd ../</a>
+</div>
+
+        <div class="footer">
+  
+  <div class="footer-more">
+      
+  </div>
+  
+  <div class="footer-more">
+      
+  </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+
+
+    </div>
+  </body>
+</html>

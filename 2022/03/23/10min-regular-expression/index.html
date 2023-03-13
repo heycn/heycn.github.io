@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="陈楠的博客" />
+  <meta name="author" content="陈楠" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      十分钟入门正则表达式 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="head">
+        <div class="avatar">
+  <a href="/">
+    <img src="/images/avatar.png" alt="" />
+  </a>
+</div>
+
+        <p class="links">
+  
+    <a title="Blog" target="" href="/archives">
+      <i class="iconfont icon-emoji-friendly"></i>
+      Blog
+    </a>
+  
+    <a title="Docs" target="_blank" href="/">
+      <i class="iconfont icon-tags"></i>
+      Docs
+    </a>
+  
+    <a title="GitHub" target="_blank" href="https://github.com/heycn">
+      <i class="iconfont icon-github"></i>
+      GitHub
+    </a>
+  
+    <a title="WeChat" target="_blank" href="/images/wechat.jpg">
+      <i class="iconfont icon-wechat"></i>
+      WeChat
+    </a>
+  
+    <a title="Twitter" target="_blank" href="https://twitter.com/heycn_112">
+      <i class="iconfont icon-twitter"></i>
+      Twitter
+    </a>
+  
+    <a title="Email" target="" href="mailto:heycn@foxmail.com">
+      <i class="iconfont icon-envelope"></i>
+      Email
+    </a>
+  
+</p>
+
+      </div>
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [
+        ['$', '$'],
+        ['\\(', '\\)']
+      ]
+    }
+  }
+</script>
+
+<div class="post">
+  <h1 class="post-title">十分钟入门正则表达式</h1>
+  <h3 class="date">Mar 23, 2022</h3>
+  <div class="content markdown-body"><p>在工作中，大部分前端使用正则，都是面向 Google&#x2F;百度一把梭，但是有些时候搜不到你想要的正则，或者有些正则把你给坑了（比如 CSDN 上的某些帖子），这个时候，我命由我不由天</p>
+<p>所以，对于前端工程师来说，正则表达式，还是很有必要学习的</p>
+<h1 id="开始学习"><a href="#开始学习" class="headerlink" title="开始学习"></a>开始学习</h1><p>这边推荐两个正则学习网站：<a target="_blank" rel="noopener" href="https://regexr-cn.com/">正则测试</a> | <a target="_blank" rel="noopener" href="https://www.codejiaonang.com/">正则练习</a></p>
+<h2 id="一、字符组"><a href="#一、字符组" class="headerlink" title="一、字符组"></a>一、字符组</h2><blockquote>
+<p>匹配中括号里出现的元素任意一次<br>如何使用？看示例就懂了</p>
+</blockquote>
+<h3 id="示例-1：匹配单词可能出现的字符"><a href="#示例-1：匹配单词可能出现的字符" class="headerlink" title="示例 1：匹配单词可能出现的字符"></a>示例 1：匹配单词可能出现的字符</h3><figure class="highlight re"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/<span class="literal">[H<span class="identifier">h</span>]</span>ello/</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>匹配文本</th>
+<th>匹配输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>hello</td>
+<td><code>hello</code></td>
+</tr>
+<tr>
+<td>Hello</td>
+<td><code>Hello</code></td>
+</tr>
+<tr>
+<td>0Hello1</td>
+<td>0<code>Hello</code>1</td>
+</tr>
+</tbody></table>
+<h3 id="示例-2：匹配多个单词"><a href="#示例-2：匹配多个单词" class="headerlink" title="示例 2：匹配多个单词"></a>示例 2：匹配多个单词</h3><figure class="highlight re"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/<span class="literal">[Y<span class="identifier">y</span>]</span>e<span class="literal">[<span class="identifier">sp</span>]</span>/</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>匹配文本</th>
+<th>匹配输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Yes, man</td>
+<td><code>Yes</code>, man</td>
+</tr>
+<tr>
+<td>Yep, good!</td>
+<td><code>Yep</code>, good!</td>
+</tr>
+<tr>
+<td>yes, ok</td>
+<td><code>yes</code>, ok</td>
+</tr>
+</tbody></table>
+<h3 id="示例-3：匹配所有数字"><a href="#示例-3：匹配所有数字" class="headerlink" title="示例 3：匹配所有数字"></a>示例 3：匹配所有数字</h3><blockquote>
+<p><code>-</code> 表示区间</p>
+</blockquote>
+<figure class="highlight re"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/<span class="literal">[<span class="number">0</span>-<span class="number">9</span>]</span>/</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>匹配文本</th>
+<th>匹配输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>这是我的手机号码：13700000000</td>
+<td>这是我的手机号码：<code>13700000000</code></td>
+</tr>
+</tbody></table>
+<p>同理，如果想匹配所有小写英文字母，那么请这样写 <code>[a-z]</code><br>如果想匹配大写，那么请这样写 <code>[A-Z]</code><br>如果你比较贪心，想大写也想小写还想要数字，那么请这么写 <code>[0-9a-zA-Z]</code></p>
+<h3 id="示例-4：-匹配特殊字符"><a href="#示例-4：-匹配特殊字符" class="headerlink" title="示例 4： 匹配特殊字符"></a>示例 4： 匹配特殊字符</h3><blockquote>
+<p><code>\</code> 表示转义</p>
+</blockquote>
+<figure class="highlight re"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/<span class="literal">[<span class="identifier">a</span>-<span class="identifier">z</span>\-]</span>/</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>匹配文本</th>
+<th>匹配输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>margin-top: 0;</td>
+<td><code>margin-top</code>: 0;</td>
+</tr>
+</tbody></table>
+<h3 id="示例-5：匹配不包含的字符"><a href="#示例-5：匹配不包含的字符" class="headerlink" title="示例 5：匹配不包含的字符"></a>示例 5：匹配不包含的字符</h3><blockquote>
+<p><code>^</code> 表示取反</p>
+</blockquote>
+<figure class="highlight re"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/<span class="literal">[^<span class="number">5</span>-<span class="number">9</span>]</span>/</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>匹配文本</th>
+<th>匹配输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0123456789</td>
+<td><code>01234</code>56789</td>
+</tr>
+</tbody></table>
+<h2 id="二、快捷方式"><a href="#二、快捷方式" class="headerlink" title="二、快捷方式"></a>二、快捷方式</h2><blockquote>
+<p>更简洁的方式去匹配<br>可以理解为：从 <code>全拼输入法</code> 到 <code>双拼输入法</code></p>
+</blockquote>
+<h3 id="示例-1-匹配所有数字"><a href="#示例-1-匹配所有数字" class="headerlink" title="示例 1: 匹配所有数字"></a>示例 1: 匹配所有数字</h3><figure class="highlight re"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/\d/</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>匹配文本</th>
+<th>匹配输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>这是数字 0123456789</td>
+<td>这是数字<code>0123456789</code></td>
+</tr>
+</tbody></table>
+<h3 id="示例-2-匹配所有字符"><a href="#示例-2-匹配所有字符" class="headerlink" title="示例 2: 匹配所有字符"></a>示例 2: 匹配所有字符</h3><figure class="highlight re"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/\w/</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>匹配文本</th>
+<th>匹配输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>内容是 number0123456789</td>
+<td>内容是 <code>number0123456789</code></td>
+</tr>
+<tr>
+<td>内容是 NUMBER0123456789</td>
+<td>内容是 <code>NUMBER0123456789</code></td>
+</tr>
+</tbody></table>
+<h3 id="示例-3-匹配空白"><a href="#示例-3-匹配空白" class="headerlink" title="示例 3: 匹配空白"></a>示例 3: 匹配空白</h3><figure class="highlight re"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/abc\s/</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>匹配文本</th>
+<th>匹配输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>abc 11</td>
+<td><code>abc </code>11</td>
+</tr>
+</tbody></table>
+<h3 id="示例-4：单词边界"><a href="#示例-4：单词边界" class="headerlink" title="示例 4：单词边界"></a>示例 4：单词边界</h3><blockquote>
+<p><code>\b</code> 包起来就是匹配到完整单词</p>
+</blockquote>
+<figure class="highlight re"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/\bhi\b/</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>匹配文本</th>
+<th>匹配输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>hello hi hey</td>
+<td>hello <code>hi</code> hey</td>
+</tr>
+</tbody></table>
+<h3 id="示例-5：取反"><a href="#示例-5：取反" class="headerlink" title="示例 5：取反"></a>示例 5：取反</h3><blockquote>
+<p>小写改成大写</p>
+</blockquote>
+<figure class="highlight re"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/\D/</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>匹配文本</th>
+<th>匹配输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>123 是数字 number</td>
+<td>123<code>是数字number</code></td>
+</tr>
+</tbody></table>
+<h3 id="示例-6：开始到结束"><a href="#示例-6：开始到结束" class="headerlink" title="示例 6：开始到结束"></a>示例 6：开始到结束</h3><blockquote>
+<p><code>^</code> 是开始 <code>$</code> 是结尾，注意不是放在区间！</p>
+</blockquote>
+<figure class="highlight re"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/^border/</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>匹配文本</th>
+<th>匹配输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>border-top</td>
+<td><code>border</code>-top</td>
+</tr>
+<tr>
+<td>border-left</td>
+<td><code>border</code>-left</td>
+</tr>
+</tbody></table>
+<h3 id="示例-7：任意字符"><a href="#示例-7：任意字符" class="headerlink" title="示例 7：任意字符"></a>示例 7：任意字符</h3><blockquote>
+<p>使用 <code>.</code> 就是匹配任意字符，但是不能匹配换行符：<code>\n</code></p>
+</blockquote>
+<figure class="highlight re"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/.ar/</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>匹配文本</th>
+<th>匹配输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ear</td>
+<td><code>ear</code></td>
+</tr>
+<tr>
+<td>car</td>
+<td><code>car</code></td>
+</tr>
+<tr>
+<td>parked</td>
+<td><code>par</code>ked</td>
+</tr>
+</tbody></table>
+<h3 id="示例-8：可选字符"><a href="#示例-8：可选字符" class="headerlink" title="示例 8：可选字符"></a>示例 8：可选字符</h3><blockquote>
+<p>使用 <code>a?</code> 表示 <code>a</code> 是可选的，可以出现也可以不出现<br>可以理解为 js 的 <code>arr.?map(item=&gt;console.log(item))</code></p>
+</blockquote>
+<figure class="highlight re"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/favou?rite/</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>匹配文本</th>
+<th>匹配输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>favorite</td>
+<td><code>favorite</code></td>
+</tr>
+<tr>
+<td>favourite</td>
+<td><code>favourite</code></td>
+</tr>
+</tbody></table>
+<h2 id="三、匹配多个-重复-数据"><a href="#三、匹配多个-重复-数据" class="headerlink" title="三、匹配多个(重复)数据"></a>三、匹配多个(重复)数据</h2><h3 id="示例-1：重复次数"><a href="#示例-1：重复次数" class="headerlink" title="示例 1：重复次数"></a>示例 1：重复次数</h3><blockquote>
+<p><code>&#123;&#125;</code> 在想要重复的字符后面加上 <code>&#123;重复次数&#125;</code><br>相当于 <code>VIM</code> 编辑模式下的 <code>number + action</code> 只是先后顺序相反</p>
+</blockquote>
+<figure class="highlight re"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/\d&#123;<span class="number">5</span>&#125;/</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>匹配文本</th>
+<th>匹配输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1234567890</td>
+<td><code>12345</code>67890</td>
+</tr>
+</tbody></table>
+<figure class="highlight re"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/\d&#123;<span class="number">3</span>&#125;-\d&#123;<span class="number">7</span>&#125;/</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>匹配文本</th>
+<th>匹配输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>010-1112222</td>
+<td><code>010-1112222</code></td>
+</tr>
+<tr>
+<td>我的电话号码是：020-1231234</td>
+<td>我的电话号码是：<code>020-1231234</code></td>
+</tr>
+</tbody></table>
+<h3 id="示例-2：重复区间"><a href="#示例-2：重复区间" class="headerlink" title="示例 2：重复区间"></a>示例 2：重复区间</h3><blockquote>
+<p>如果我写 <code>\d&#123;5,6&#125;</code>，正则默认是贪婪模式，就是说会优先匹配 6 个，那么我们如果想优先匹配 5 个，可以这么写：<code>\d&#123;5,6&#125;?</code></p>
+</blockquote>
+<figure class="highlight re"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/\d&#123;<span class="number">5</span>,<span class="number">6</span>&#125;/</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>匹配文本</th>
+<th>匹配输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>123456</td>
+<td><code>123456</code></td>
+</tr>
+</tbody></table>
+<h3 id="示例-3：开闭区间"><a href="#示例-3：开闭区间" class="headerlink" title="示例 3：开闭区间"></a>示例 3：开闭区间</h3><figure class="highlight re"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/\d&#123;<span class="number">1</span>,&#125;/</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>匹配文本</th>
+<th>匹配输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0123456</td>
+<td>0<code>123456</code></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><code>+</code> 等价于 <code>&#123;1,&#125;</code>，<code>*</code> 等价于 <code>&#123;0,&#125;</code></p>
+</blockquote>
+<h2 id="四：实战"><a href="#四：实战" class="headerlink" title="四：实战"></a>四：实战</h2><h3 id="实战-1：匹配所有手机号码"><a href="#实战-1：匹配所有手机号码" class="headerlink" title="实战 1：匹配所有手机号码"></a>实战 1：匹配所有手机号码</h3><p>规则：</p>
+<ol>
+<li>必须是 <code>11</code> 位的数字；</li>
+<li>第一位数字必须以 <code>1</code> 开头，第二位数字可以是 <code>[3,4,5,7,8]</code> 中的任意一个，后面 <code>9</code> 个数是 <code>[0-9]</code> 中的任意一个数字。</li>
+</ol>
+<figure class="highlight re"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/^<span class="number">1</span><span class="literal">[<span class="number">34578</span>]</span>\d&#123;<span class="number">9</span>&#125;/</span><br></pre></td></tr></table></figure>
+
+<h3 id="实战-2：匹配所有以-http-开头，以-结尾的数据"><a href="#实战-2：匹配所有以-http-开头，以-结尾的数据" class="headerlink" title="实战 2：匹配所有以 http 开头，以 / 结尾的数据"></a>实战 2：匹配所有以 <code>http</code> 开头，以 <code>/</code> 结尾的数据</h3><figure class="highlight re"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/http.*/$/</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>快去做些小练习吧！</p>
+<p>感谢阅读，下次见 :)</p>
+</div>
+   
+  <a id="older" class="blog-nav" href="/2022/03/09/react-virtual-dom/">OLDER&nbsp;&gt;</a>
+   
+  <a id="newer" class="blog-nav" href="/2022/06/15/http-client/">&lt;&nbsp;NEWER</a>
+   
+  <br />
+  <a href="/archives">cd ../</a>
+</div>
+
+        <div class="footer">
+  
+  <div class="footer-more">
+      
+  </div>
+  
+  <div class="footer-more">
+      
+  </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+
+
+    </div>
+  </body>
+</html>

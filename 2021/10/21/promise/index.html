@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="陈楠的博客" />
+  <meta name="author" content="陈楠" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      更好地认识「Promise」 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="head">
+        <div class="avatar">
+  <a href="/">
+    <img src="/images/avatar.png" alt="" />
+  </a>
+</div>
+
+        <p class="links">
+  
+    <a title="Blog" target="" href="/archives">
+      <i class="iconfont icon-emoji-friendly"></i>
+      Blog
+    </a>
+  
+    <a title="Docs" target="_blank" href="/">
+      <i class="iconfont icon-tags"></i>
+      Docs
+    </a>
+  
+    <a title="GitHub" target="_blank" href="https://github.com/heycn">
+      <i class="iconfont icon-github"></i>
+      GitHub
+    </a>
+  
+    <a title="WeChat" target="_blank" href="/images/wechat.jpg">
+      <i class="iconfont icon-wechat"></i>
+      WeChat
+    </a>
+  
+    <a title="Twitter" target="_blank" href="https://twitter.com/heycn_112">
+      <i class="iconfont icon-twitter"></i>
+      Twitter
+    </a>
+  
+    <a title="Email" target="" href="mailto:heycn@foxmail.com">
+      <i class="iconfont icon-envelope"></i>
+      Email
+    </a>
+  
+</p>
+
+      </div>
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [
+        ['$', '$'],
+        ['\\(', '\\)']
+      ]
+    }
+  }
+</script>
+
+<div class="post">
+  <h1 class="post-title">更好地认识「Promise」</h1>
+  <h3 class="date">Oct 21, 2021</h3>
+  <div class="content markdown-body"><blockquote>
+<p>关于 <code>Promise</code> 相关的 <code>使用</code>，语言尽量<code>通俗易懂</code>，<code>减少废话</code>，如果想了解更深层次，去看隔壁看的博客&#x2F;文档，或许会更好</p>
+</blockquote>
+<p>这篇博客将是一个合集开始，会持续以 <code>通俗易懂</code> <code>减少废话</code> 的形式，来简述 Promise 的 <code>基本用法</code>，如果想更 <code>深层</code> 地研究 Promise，那么我的博客将不适合你阅览。</p>
+<hr>
+<h1 id="Promise"><a href="#Promise" class="headerlink" title="Promise"></a>Promise</h1><p>首先要明白：前端向 <code>服务器发送请求</code> 会干嘛？<br>显然会 <code>得到响应</code><br>那么：得到响应是 <code>需要一定的时间</code><br>明白之后，在「<strong>怎么做</strong>」部分就能更好的理解</p>
+<h2 id="Promise-是什么"><a href="#Promise-是什么" class="headerlink" title="Promise 是什么"></a>Promise 是什么</h2><ul>
+<li>解决异步编程的一种方案：<code>异步 =&gt; 同步</code>，比传统的 <code>回调函数和事件</code> 更合理</li>
+<li>原先于 <code>1976 年</code>，由 Daniel P.Friedman 和 David Wise 提出 <code>Promise 思想</code></li>
+<li>前端结合 Promise 和 JS，制定了 <a target="_blank" rel="noopener" href="https://promisesaplus.com/">Promise&#x2F;A+ 规范</a></li>
+<li><code>ES6</code> 将其写进了 <code>语言标准</code></li>
+</ul>
+<h2 id="为什么要用-Promise"><a href="#为什么要用-Promise" class="headerlink" title="为什么要用 Promise"></a>为什么要用 Promise</h2><ul>
+<li>因为好用啊，哪还有为什么？</li>
+<li>因为之前解决异步的方法 <code>不够规范</code>、<code>回调地狱</code>、<code>很难进行错误处理</code></li>
+</ul>
+<h2 id="怎么做"><a href="#怎么做" class="headerlink" title="怎么做"></a>怎么做</h2><p>具体看 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise">MDN</a> 或 <code>阮一峰</code> 的博客</p>
+<p>我这里做一个 <code>面向现实编程</code>，跟着我的思路，你就能看懂<br>PS：更深的原理，请看 <code>MDN</code></p>
+<h3 id="动手-「红绿灯」"><a href="#动手-「红绿灯」" class="headerlink" title="动手:「红绿灯」"></a>动手:「红绿灯」</h3><ol>
+<li>我们做一个交通信号灯，排除停电，信号灯<code>始终只处于3种状态其中之一</code>：红灯、绿灯、黄灯；那再简单点，把黄灯排除掉，现在还有哪些灯？自己用幼儿园数学算算！</li>
+<li>那我们就实现这个信号灯：</li>
+<li>因为我们需要判断信号灯处于哪个状态，由于只有两种状态：<code>非绿即红</code>，那我们声明一个变量 <code>isGreenLight</code> 判断是否为 <code>绿灯</code>，默认为 <code>true</code>（绿灯）</li>
+<li>因为 Promise 是一个构造函数，那我们首先需要 <code>new</code> 一个 <code>Promise</code>，里面执行一个函数，该函数有两个参数，分别为 <code>resolve (等待 =&gt; 成功)</code> 和 <code>reject (等待 =&gt; 失败)</code></li>
+<li>接着判断红绿灯的状态，如果为绿灯，那么返回 <code>resolve</code> 绿灯，否则返回 <code>reject</code> 红灯</li>
+<li>调用 <code>promise</code>，先设置成功的返回结果，就是 <code>.then</code>然后传入一个函数，这个函数接受一个 <code>参数</code>，这个 <code>参数</code> 就是前面 <code>resolve</code> 保留的参数</li>
+<li>再 <code>.catch</code>，里面也传入一个函数，函数同样接受一个 <code>参数</code>，这个 <code>参数</code> 就是前面 <code>reject</code> 保留的参数</li>
+<li>最后 <code>.finally</code> 传入一个函数，返回 <code>最终的结果</code> (我们这里要研究的最终结果是 <code>promise 执行了</code>)</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> isGreenLight = <span class="literal">true</span></span><br><span class="line"><span class="keyword">const</span> promise = <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">  isGreenLight ? <span class="title function_">resolve</span>(<span class="string">&#x27;绿灯&#x27;</span>) : <span class="title function_">reject</span>(<span class="string">&#x27;红灯&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">promise</span><br><span class="line">  .<span class="title function_">then</span>(<span class="function"><span class="params">light</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`现在交通灯为<span class="subst">$&#123;light&#125;</span>，你可以大胆往前走了`</span>)</span><br><span class="line">  &#125;)</span><br><span class="line">  .<span class="title function_">catch</span>(<span class="function"><span class="params">light</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`现在交通灯为<span class="subst">$&#123;light&#125;</span>，你想走？那祝你好运！`</span>)</span><br><span class="line">  &#125;)</span><br><span class="line">  .<span class="title function_">finally</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;但是最终 promise 还是执行了，灯也亮了&#x27;</span>)</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 现在交通灯为绿灯，你可以大胆往前走了</span></span><br><span class="line"><span class="comment">// 但是最终 promise 还是执行了，灯也是亮着的</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="ajax-请求"><a href="#ajax-请求" class="headerlink" title="ajax 请求"></a>ajax 请求</h3><p>还有另外一种写法：<br><code>.then(success, fail)</code><br>也可以不用 <code>.catch</code>，直接 <code>.then(传入的第一个函数是成功函数，第二个函数是失败函数)</code>\</p>
+<p>我们来执行 <code>AJAX 请求</code> (假设已经 <code>new</code> 了 <code>Promise</code>)</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">ajax</span>(<span class="string">&#x27;get&#x27;</span>. <span class="string">&#x27;/xxx&#x27;</span>)</span><br><span class="line">  .<span class="title function_">then</span>(<span class="function">(<span class="params">response</span>) =&gt;</span> &#123;&#125;, <span class="function">(<span class="params">request</span>) =&gt;</span> &#123;&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// .then(success, fail)</span></span><br><span class="line"><span class="comment">// 也可以不用 catch，直接.then(传入的第一个函数是成功函数，第二个函数是失败函数)</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><ul>
+<li>第一步<ul>
+<li><code>return new Promise((resolve, reject) =&gt; &#123; ... &#125;)</code></li>
+<li>成功则调用 <code>resolve(result)</code></li>
+<li>失败则调用 <code>reject(error)</code></li>
+<li><code>resolve</code> 和 <code>reject</code> 会再去调用成功和失败函数</li>
+</ul>
+</li>
+<li>第二步<ul>
+<li>使用 <code>.then(success, fail)</code> 传入成功和失败函数</li>
+</ul>
+</li>
+<li>Stop！<ul>
+<li>还有其他更高级的用法，可能新手会觉得这个 <code>Promise</code> 会不好理解，这时候需要停止研究，请先熟悉它！</li>
+</ul>
+</li>
+</ul>
+<h2 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h2><ol>
+<li><code>统一</code> 异步 API</li>
+<li>支持 <code>链式调用</code>，解决 <code>回调地狱</code></li>
+<li>更好的 <code>错误处理</code></li>
+</ol>
+<h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><ol>
+<li>无法取消</li>
+<li>处于 <code>Pending</code> 时，无法得知当时是在哪个阶段</li>
+</ol>
+<h2 id="如何解决缺点"><a href="#如何解决缺点" class="headerlink" title="如何解决缺点"></a>如何解决缺点</h2><ul>
+<li>别用，咋想的</li>
+</ul>
+<p>如果你很 <code>硬核</code> 想研究 <code>Promise 源码</code>，那么请 <a target="_blank" rel="noopener" href="https://github.com/FrankFang/promise-2/blob/master/src/promise.ts">点击这里</a><br>注：但这不是给新手看的，我没看，我不敢看</p>
+<p>感谢阅读，下次见 :)</p>
+</div>
+   
+  <a id="older" class="blog-nav" href="/2021/10/09/js-function-execution-time/">OLDER&nbsp;&gt;</a>
+   
+  <a id="newer" class="blog-nav" href="/2021/11/18/debounce-throttle/">&lt;&nbsp;NEWER</a>
+   
+  <br />
+  <a href="/archives">cd ../</a>
+</div>
+
+        <div class="footer">
+  
+  <div class="footer-more">
+      
+  </div>
+  
+  <div class="footer-more">
+      
+  </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+
+
+    </div>
+  </body>
+</html>

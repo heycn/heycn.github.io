@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="陈楠的博客" />
+  <meta name="author" content="陈楠" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      「编程技巧」—— 链式编程 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="head">
+        <div class="avatar">
+  <a href="/">
+    <img src="/images/avatar.png" alt="" />
+  </a>
+</div>
+
+        <p class="links">
+  
+    <a title="Blog" target="" href="/archives">
+      <i class="iconfont icon-emoji-friendly"></i>
+      Blog
+    </a>
+  
+    <a title="Docs" target="_blank" href="/">
+      <i class="iconfont icon-tags"></i>
+      Docs
+    </a>
+  
+    <a title="GitHub" target="_blank" href="https://github.com/heycn">
+      <i class="iconfont icon-github"></i>
+      GitHub
+    </a>
+  
+    <a title="WeChat" target="_blank" href="/images/wechat.jpg">
+      <i class="iconfont icon-wechat"></i>
+      WeChat
+    </a>
+  
+    <a title="Twitter" target="_blank" href="https://twitter.com/heycn_112">
+      <i class="iconfont icon-twitter"></i>
+      Twitter
+    </a>
+  
+    <a title="Email" target="" href="mailto:heycn@foxmail.com">
+      <i class="iconfont icon-envelope"></i>
+      Email
+    </a>
+  
+</p>
+
+      </div>
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [
+        ['$', '$'],
+        ['\\(', '\\)']
+      ]
+    }
+  }
+</script>
+
+<div class="post">
+  <h1 class="post-title">「编程技巧」—— 链式编程</h1>
+  <h3 class="date">Feb 09, 2023</h3>
+  <div class="content markdown-body"><p>分享几个 JavaScript 编程技巧，包含 <code>函数式编程范式</code> 和 <code>链式编程</code></p>
+<p>需求：<br>输入 <code>[&#39;avatar.jpg &#39;, &#39;.gitignore&#39;, &#39;    &#39;, &#39;index.js&#39;]</code><br>输出 <code>[&#39;~/app/avatar.jpg&#39;, &#39;~/app/.gitignore&#39;, &#39;~/app/index.js&#39;]</code></p>
+<p>请看以下 3 种实现方式</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/heycn/javascript-hotpot/blob/master/methodChaining/index.js">代码仓库</a></p>
+<h2 id="一、for-of"><a href="#一、for-of" class="headerlink" title="一、for of"></a>一、<strong>for of</strong></h2><ol>
+<li>使用 <code>for of</code> 获取数组中的字符串，去除空格</li>
+<li>判断去除空格之后是不是为空字符串</li>
+<li>如果不是为空字符串，就将这些字符串进行拼接并 <code>push</code> 进一个数组</li>
+<li><code>return</code> 这个数组</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> files = [<span class="string">&#x27;avatar.jpg &#x27;</span>, <span class="string">&#x27;.gitignore&#x27;</span>, <span class="string">&#x27;    &#x27;</span>, <span class="string">&#x27;index.js&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">forLoops</span> = files =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> result = []</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> file <span class="keyword">of</span> files) &#123;</span><br><span class="line">    <span class="keyword">const</span> fileName = file.<span class="title function_">trim</span>()</span><br><span class="line">    <span class="keyword">if</span> (fileName) &#123;</span><br><span class="line">      <span class="keyword">const</span> filePath = <span class="string">`~/app/<span class="subst">$&#123;fileName&#125;</span>`</span></span><br><span class="line">      result.<span class="title function_">push</span>(filePath)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">forLoops</span>(files)) <span class="comment">// [ &#x27;~/app/avatar.jpg&#x27;, &#x27;~/app/.gitignore&#x27;, &#x27;~/app/index.js&#x27; ]</span></span><br></pre></td></tr></table></figure>
+
+<p>这种 <code>for</code> 循环的方式对于现在 JS 编程来讲其实不是太流行，现在更多流行的是利用 <code>函数式</code> 的这种方式去解决</p>
+<p>比如下面的 <code>reduce</code></p>
+<h2 id="二、reduce"><a href="#二、reduce" class="headerlink" title="二、reduce"></a>二、<strong>reduce</strong></h2><ol>
+<li><code>reduce</code></li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> files = [<span class="string">&#x27;avatar.jpg &#x27;</span>, <span class="string">&#x27;.gitignore&#x27;</span>, <span class="string">&#x27;    &#x27;</span>, <span class="string">&#x27;index.js&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">reduceWay</span> = files =&gt; &#123;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    files.<span class="title function_">reduce</span>(<span class="function">(<span class="params">result, file</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">const</span> fileName = file.<span class="title function_">trim</span>()</span><br><span class="line">      <span class="keyword">if</span> (fileName) &#123;</span><br><span class="line">        <span class="keyword">const</span> filePath = <span class="string">`~/app/<span class="subst">$&#123;fileName&#125;</span>`</span></span><br><span class="line">        result.<span class="title function_">push</span>(filePath)</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> result</span><br><span class="line">    &#125;, [])</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">reduceWay</span>(files)) <span class="comment">// [ &#x27;~/app/avatar.jpg&#x27;, &#x27;~/app/.gitignore&#x27;, &#x27;~/app/index.js&#x27; ]</span></span><br></pre></td></tr></table></figure>
+
+<p>除了用 <code>reduce</code>，还可以利用方法调用链这种方式来进行实现</p>
+<h2 id="三、链式编程"><a href="#三、链式编程" class="headerlink" title="三、链式编程"></a>三、<strong>链式编程</strong></h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">chain</span> = files =&gt; (</span><br><span class="line">  files</span><br><span class="line">    .<span class="title function_">map</span>(<span class="function"><span class="params">file</span> =&gt;</span> file.<span class="title function_">trim</span>())</span><br><span class="line">    .<span class="title function_">filter</span>(<span class="title class_">Boolean</span>)</span><br><span class="line">    .<span class="title function_">map</span>(<span class="function"><span class="params">fileName</span> =&gt;</span> <span class="string">`~/app/<span class="subst">$&#123;fileName&#125;</span>`</span>)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">chain</span>(files)) <span class="comment">// [ &#x27;~/app/avatar.jpg&#x27;, &#x27;~/app/.gitignore&#x27;, &#x27;~/app/index.js&#x27; ]</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="四、总结"><a href="#四、总结" class="headerlink" title="四、总结"></a>四、<strong>总结</strong></h2><ul>
+<li><code>链式调用</code> 的方式更符合 <code>声明式</code> 的编程方式，更易读、更容易扩展、每个方法只注重一件事</li>
+<li><code>reduce</code> 更符合 <code>函数式</code> 的编程范式</li>
+<li>传统 <code>for</code> 循环已经慢慢退出 <code>JS 编程</code> 最佳范式了，所以现在更加推荐使用 <code>reduce</code> 和 <code>方法链调用</code></li>
+</ul>
+<p>大家更喜欢哪种呢？</p>
+<p>感谢阅读，下次见 :)</p>
+</div>
+   
+  <a id="older" class="blog-nav" href="/2023/02/09/javascript-the-good-parts/">OLDER&nbsp;&gt;</a>
+   
+  <a id="newer" class="blog-nav" href="/2023/02/10/function-is-so-funny-1/">&lt;&nbsp;NEWER</a>
+   
+  <br />
+  <a href="/archives">cd ../</a>
+</div>
+
+        <div class="footer">
+  
+  <div class="footer-more">
+      
+  </div>
+  
+  <div class="footer-more">
+      
+  </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="陈楠的博客" />
+  <meta name="author" content="陈楠" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      手写「深拷贝」的心路历程 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="head">
+        <div class="avatar">
+  <a href="/">
+    <img src="/images/avatar.png" alt="" />
+  </a>
+</div>
+
+        <p class="links">
+  
+    <a title="Blog" target="" href="/archives">
+      <i class="iconfont icon-emoji-friendly"></i>
+      Blog
+    </a>
+  
+    <a title="Docs" target="_blank" href="/">
+      <i class="iconfont icon-tags"></i>
+      Docs
+    </a>
+  
+    <a title="GitHub" target="_blank" href="https://github.com/heycn">
+      <i class="iconfont icon-github"></i>
+      GitHub
+    </a>
+  
+    <a title="WeChat" target="_blank" href="/images/wechat.jpg">
+      <i class="iconfont icon-wechat"></i>
+      WeChat
+    </a>
+  
+    <a title="Twitter" target="_blank" href="https://twitter.com/heycn_112">
+      <i class="iconfont icon-twitter"></i>
+      Twitter
+    </a>
+  
+    <a title="Email" target="" href="mailto:heycn@foxmail.com">
+      <i class="iconfont icon-envelope"></i>
+      Email
+    </a>
+  
+</p>
+
+      </div>
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [
+        ['$', '$'],
+        ['\\(', '\\)']
+      ]
+    }
+  }
+</script>
+
+<div class="post">
+  <h1 class="post-title">手写「深拷贝」的心路历程</h1>
+  <h3 class="date">Dec 09, 2021</h3>
+  <div class="content markdown-body"><p>跟着思路，从 0 开始，写出一个深拷贝吧！</p>
+<h2 id="雏形"><a href="#雏形" class="headerlink" title="雏形"></a>雏形</h2><p>实现深拷贝，有这个 <code>深</code> 字，我们就想到需要使用递归，但是我们先把 <code>数据类型</code> 给判断了吧！</p>
+<p>写深拷贝，我们必须知道 JS 的数据类型：</p>
+<h3 id="先明白-JS-类型"><a href="#先明白-JS-类型" class="headerlink" title="先明白 JS 类型"></a>先明白 JS 类型</h3><ul>
+<li>string</li>
+<li>number</li>
+<li>bool</li>
+<li>null</li>
+<li>undefined</li>
+<li>symbol</li>
+<li>bigint</li>
+<li>object</li>
+</ul>
+<h3 id="判断数据类型"><a href="#判断数据类型" class="headerlink" title="判断数据类型"></a>判断数据类型</h3><ul>
+<li>这 8 种里有个明显的分割线：<code>对象</code> 和 <code>其他的 7 种</code> 是不一样的</li>
+<li>如何判断？如果不考虑 iframe，那就用 <code>instanceof</code> 判断</li>
+<li>if(a 是 Object 的<code>实例</code>){ 复杂类型<code>Object</code> } else { 基本类型 <code>string</code> <code>number</code> <code>bool</code> <code>null</code> <code>undefined</code> <code>symbol</code> <code>bigint</code> }</li>
+<li>判断对象的类：<ul>
+<li>函数<ul>
+<li>普通函数</li>
+<li>箭头函数</li>
+</ul>
+</li>
+<li>数组</li>
+<li>日期</li>
+<li>正则</li>
+</ul>
+</li>
+<li>最后循环，递归&#x2F;调用深拷贝（自己调自己）</li>
+<li>那按照思路开始写吧！</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">deepClone</span> = a =&gt; &#123;</span><br><span class="line">  <span class="keyword">if</span> (a <span class="keyword">instanceof</span> <span class="title class_">Object</span>) &#123;</span><br><span class="line">    <span class="comment">// 判断类型（不考虑 iframe</span></span><br><span class="line">    <span class="keyword">let</span> result <span class="comment">// 拷贝的结果</span></span><br><span class="line">    <span class="keyword">if</span> (a <span class="keyword">instanceof</span> <span class="title class_">Function</span>) &#123;</span><br><span class="line">      <span class="comment">// 如果是函数，则需要判断普通函数和箭头函数</span></span><br><span class="line">      <span class="keyword">if</span> (a.<span class="property"><span class="keyword">prototype</span></span>) &#123;</span><br><span class="line">        <span class="comment">// 有 prototype 则是普通函数，则返回一个函数</span></span><br><span class="line">        <span class="comment">// 传 this 给我，我就传 this 给 a，传什么参数给我，我就传什么参数给 a，然后把 a 的返回值作为我的返回值</span></span><br><span class="line">        <span class="comment">// 这样我的输入和输出和 a 一模一样，所以我是 a 的深拷贝</span></span><br><span class="line">        result = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">          <span class="keyword">return</span> a.<span class="title function_">apply</span>(<span class="variable language_">this</span>, <span class="variable language_">arguments</span>)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 如果是箭头函数，则返回一个箭头函数，</span></span><br><span class="line">        <span class="comment">// 传给我什么参数，我就把什么参数传给 a，箭头函数没有 this，则返回undefined，把 a 的返回值作为我的返回值</span></span><br><span class="line">        result = <span class="function">(<span class="params">...args</span>) =&gt;</span> &#123;</span><br><span class="line">          <span class="keyword">return</span> a.<span class="title function_">call</span>(<span class="literal">undefined</span>, ...args)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (a <span class="keyword">instanceof</span> <span class="title class_">Array</span>) &#123;</span><br><span class="line">      <span class="comment">// 如果是数组，则返回一个空数组</span></span><br><span class="line">      <span class="comment">// 数组的内容由下面递归拷贝</span></span><br><span class="line">      result = []</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (a <span class="keyword">instanceof</span> <span class="title class_">Date</span>) &#123;</span><br><span class="line">      <span class="comment">// 如果是日期，则返回一个Date</span></span><br><span class="line">      <span class="comment">// 日期的内容为传给我的时间戳（把日期减0就会得到数字，这个数字是时间戳）或者 ISO 8601 字符串</span></span><br><span class="line">      result = <span class="keyword">new</span> <span class="title class_">Date</span>(a - <span class="number">0</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (a <span class="keyword">instanceof</span> <span class="title class_">RegExp</span>) &#123;</span><br><span class="line">      <span class="comment">// 如果是正则，则返回一个正则</span></span><br><span class="line">      <span class="comment">// 正则的内容为传给我的 source 和 flags</span></span><br><span class="line">      result = <span class="keyword">new</span> <span class="title class_">RegExp</span>(a.<span class="property">source</span>, a.<span class="property">flags</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// 其他的则是普通对象，则返回一个空对象</span></span><br><span class="line">      <span class="comment">// 对象内容有下面递归拷贝</span></span><br><span class="line">      result = &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> a) &#123;</span><br><span class="line">      <span class="comment">// 递归：把 a 的所有子属性再深拷贝一遍</span></span><br><span class="line">      result[key] = <span class="title function_">deepClone</span>(a[key])</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 不是对象则是：string number bool null undefined symbol bigint</span></span><br><span class="line">    <span class="comment">// 则直接返回 a</span></span><br><span class="line">    <span class="keyword">return</span> a</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样，一个深拷贝就写完了！<br>但是，这个代码还有问题<br>如果 <code>a.self = a</code> 那么就会在递归里出不来<br>那么需要检查 <code>环</code> - 检查 <code>循环引用</code></p>
+<h2 id="检查「环」"><a href="#检查「环」" class="headerlink" title="检查「环」"></a>检查「环」</h2><ul>
+<li>上面说了，可能会在递归里出不来</li>
+<li>需要检查拷贝的东西是不是曾经拷贝过了，如果拷贝过，我就不再拷贝，直接返回已经被我拷贝过的东西</li>
+<li>那我们需要一个 Map，为什么是使用 Map 而不是对象呢？</li>
+<li>因为我们的 key 是一个对象，那么他的 key 就是 String 或者 Symbol</li>
+<li>所以需要一个 Map 来映射：只要我曾经拷贝过了，我就不会再拷贝第二次</li>
+<li>开始写吧：</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> cache = <span class="keyword">new</span> <span class="title class_">Map</span>() <span class="comment">// 定义缓存</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">deepClone</span> = a =&gt; &#123;</span><br><span class="line">  <span class="comment">// 在深拷贝的时候检查一下</span></span><br><span class="line">  <span class="keyword">if</span> (cache.<span class="title function_">get</span>(a)) &#123;</span><br><span class="line">    <span class="comment">// 如果发现 a 已经存在</span></span><br><span class="line">    <span class="comment">// 就直接返回已经被我拷贝的东西</span></span><br><span class="line">    <span class="keyword">return</span> cache.<span class="title function_">get</span>(a)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (a <span class="keyword">instanceof</span> <span class="title class_">Object</span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> result</span><br><span class="line">    <span class="keyword">if</span> (a <span class="keyword">instanceof</span> <span class="title class_">Function</span>) &#123;</span><br><span class="line">      <span class="keyword">if</span> (a.<span class="property"><span class="keyword">prototype</span></span>) &#123;</span><br><span class="line">        result = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">          <span class="keyword">return</span> a.<span class="title function_">apply</span>(<span class="variable language_">this</span>, <span class="variable language_">arguments</span>)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        result = <span class="function">(<span class="params">...args</span>) =&gt;</span> &#123;</span><br><span class="line">          <span class="keyword">return</span> a.<span class="title function_">call</span>(<span class="literal">undefined</span>, ...args)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (a <span class="keyword">instanceof</span> <span class="title class_">Array</span>) &#123;</span><br><span class="line">      result = []</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (a <span class="keyword">instanceof</span> <span class="title class_">Date</span>) &#123;</span><br><span class="line">      result = <span class="keyword">new</span> <span class="title class_">Date</span>(a - <span class="number">0</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (a <span class="keyword">instanceof</span> <span class="title class_">RegExp</span>) &#123;</span><br><span class="line">      result = <span class="keyword">new</span> <span class="title class_">RegExp</span>(a.<span class="property">source</span>, a.<span class="property">flags</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      result = &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 构造出 result 之后往 cache 放东西</span></span><br><span class="line">    cache.<span class="title function_">set</span>(a, result)</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> a) &#123;</span><br><span class="line">      result[key] = <span class="title function_">deepClone</span>(a[key])</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> a</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>写的不错，请问还有什么问题？<br>请看下面</p>
+<h2 id="不拷贝原型"><a href="#不拷贝原型" class="headerlink" title="不拷贝原型"></a>不拷贝原型</h2><ul>
+<li>我们在遍历 a 的时候，不能什么都遍历，有些属性是继承得到的，如果是继承得到的，我们不应该去深拷贝它</li>
+<li>需要用 <code>hasOwnProperty</code> 来判断是不是自己拥有</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> cache = <span class="keyword">new</span> <span class="title class_">Map</span>()</span><br><span class="line"><span class="keyword">const</span> <span class="title function_">deepClone</span> = a =&gt; &#123;</span><br><span class="line">  <span class="keyword">if</span> (cache.<span class="title function_">get</span>(a)) &#123;</span><br><span class="line">    <span class="keyword">return</span> cache.<span class="title function_">get</span>(a)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (a <span class="keyword">instanceof</span> <span class="title class_">Object</span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> result</span><br><span class="line">    <span class="keyword">if</span> (a <span class="keyword">instanceof</span> <span class="title class_">Function</span>) &#123;</span><br><span class="line">      <span class="keyword">if</span> (a.<span class="property"><span class="keyword">prototype</span></span>) &#123;</span><br><span class="line">        result = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">          <span class="keyword">return</span> a.<span class="title function_">apply</span>(<span class="variable language_">this</span>, <span class="variable language_">arguments</span>)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        result = <span class="function">(<span class="params">...args</span>) =&gt;</span> &#123;</span><br><span class="line">          <span class="keyword">return</span> a.<span class="title function_">call</span>(<span class="literal">undefined</span>, ...args)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (a <span class="keyword">instanceof</span> <span class="title class_">Array</span>) &#123;</span><br><span class="line">      result = []</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (a <span class="keyword">instanceof</span> <span class="title class_">Date</span>) &#123;</span><br><span class="line">      result = <span class="keyword">new</span> <span class="title class_">Date</span>(a - <span class="number">0</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (a <span class="keyword">instanceof</span> <span class="title class_">RegExp</span>) &#123;</span><br><span class="line">      result = <span class="keyword">new</span> <span class="title class_">RegExp</span>(a.<span class="property">source</span>, a.<span class="property">flags</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      result = &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    cache.<span class="title function_">set</span>(a, result)</span><br><span class="line">    <span class="comment">// 细节在这里，我们在遍历 a 的时候，不能什么都遍历，有些属性是继承得到的，如果是继承得到的，我们不应该去深拷贝它</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> a) &#123;</span><br><span class="line">      <span class="comment">// 如果 key 在 a 的身上，我才会拷贝到 result，如果不在，则是在原型，在原型上我就不拷贝</span></span><br><span class="line">      <span class="keyword">if</span> (a.<span class="title function_">hasOwnProperty</span>(key)) &#123;</span><br><span class="line">        result[key] = <span class="title function_">deepClone</span>(a[key])</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> a</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>深拷贝还是很考察基础知识的</p>
+<p>感谢阅读，下次见 :)</p>
+</div>
+   
+  <a id="older" class="blog-nav" href="/2021/11/27/tcp-four-way-handshake/">OLDER&nbsp;&gt;</a>
+   
+  <a id="newer" class="blog-nav" href="/2022/01/16/immediately-invoked-function-expression/">&lt;&nbsp;NEWER</a>
+   
+  <br />
+  <a href="/archives">cd ../</a>
+</div>
+
+        <div class="footer">
+  
+  <div class="footer-more">
+      
+  </div>
+  
+  <div class="footer-more">
+      
+  </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+
+
+    </div>
+  </body>
+</html>

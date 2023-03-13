@@ -1,0 +1,94 @@
+body {
+  font-family: "Montserrat", "Helvetica Neue", "Hiragino Sans GB", "LiHei Pro", Arial, sans-serif;
+  text-rendering: optimizelegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 16px;
+  word-spacing: 1px;
+  color: #666;
+  margin: 0;
+}
+
+a {
+  color: #666;
+  text-decoration: none;
+  transition: 0.3s;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+  -webkit-user-select: none;
+  -moz-user-focus: none;
+  -moz-user-select: none;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 64px 0 32px;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  font-family: "Roboto", "Helvetica Neue", "Hiragino Sans GB", "LiHei Pro", Arial, serif;
+  font-size: 16px;
+  margin: 0;
+}
+
+.links a {
+  cursor: pointer;
+  padding: 6px;
+  margin: 0 3px;
+  color: #999;
+}
+
+.links a:hover {
+  color: #000;
+  filter: drop-shadow(0px 0px 0px #374151);
+}
+
+.links a:hover i {
+  filter: drop-shadow(0px 0px 0px #374151);
+}
+
+.search-result, .search-input, .post-item, h1, h2, h3, h4, h5, h6 {
+  font-family: "Montserrat", "Helvetica Neue", "Hiragino Sans GB", "LiHei Pro", Arial, sans-serif;
+  font-weight: 400;
+  color: #444;
+}
+
+.main {
+  max-width: 650px;
+  margin: 50px auto 0;
+  padding: 32px;
+  padding-top: 0;
+  position: relative;
+  min-height: calc(100vh - 176px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cd {
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: #999;
+  text-decoration: none;
+  border-bottom: 1px solid #e3e3e3;
+  transition: all .3s;
+}
+
+.cd:hover {
+  color: #000;
+  border-bottom: 1px solid #000;
+}
+
+@media screen and (max-width: 420px) {
+  .main {
+    min-height: calc(100vh - 156px);
+  }
+  .links {
+    font-size: 14px;
+  }
+}

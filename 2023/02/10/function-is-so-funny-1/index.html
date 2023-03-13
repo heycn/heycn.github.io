@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="陈楠的博客" />
+  <meta name="author" content="陈楠" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      对象是穷人的闭包，闭包是穷人的对象 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="head">
+        <div class="avatar">
+  <a href="/">
+    <img src="/images/avatar.png" alt="" />
+  </a>
+</div>
+
+        <p class="links">
+  
+    <a title="Blog" target="" href="/archives">
+      <i class="iconfont icon-emoji-friendly"></i>
+      Blog
+    </a>
+  
+    <a title="Docs" target="_blank" href="/">
+      <i class="iconfont icon-tags"></i>
+      Docs
+    </a>
+  
+    <a title="GitHub" target="_blank" href="https://github.com/heycn">
+      <i class="iconfont icon-github"></i>
+      GitHub
+    </a>
+  
+    <a title="WeChat" target="_blank" href="/images/wechat.jpg">
+      <i class="iconfont icon-wechat"></i>
+      WeChat
+    </a>
+  
+    <a title="Twitter" target="_blank" href="https://twitter.com/heycn_112">
+      <i class="iconfont icon-twitter"></i>
+      Twitter
+    </a>
+  
+    <a title="Email" target="" href="mailto:heycn@foxmail.com">
+      <i class="iconfont icon-envelope"></i>
+      Email
+    </a>
+  
+</p>
+
+      </div>
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [
+        ['$', '$'],
+        ['\\(', '\\)']
+      ]
+    }
+  }
+</script>
+
+<div class="post">
+  <h1 class="post-title">对象是穷人的闭包，闭包是穷人的对象</h1>
+  <h3 class="date">Feb 10, 2023</h3>
+  <div class="content markdown-body"><blockquote>
+<p>本篇博客默认各位已经接触过 <code>JS 函数</code>，并且对 <code>闭包</code> 有一定的理解</p>
+</blockquote>
+<h2 id="我对函数的理解"><a href="#我对函数的理解" class="headerlink" title="我对函数的理解"></a>我对函数的理解</h2><p><code>一个或多个语句组成</code>、<code>完成特定功能</code>、<code>相对独立</code> 的代码就叫做函数</p>
+<p>但是，在之前这可不叫做函数，这叫「子程序」</p>
+<p>最开始程序员写的程序大部分是「汇编」，后来才有的 <code>C</code>、<code>CPP</code> 之类的语言，但那个时候没有「函数」这个概念，它只有一个叫做「子程序」</p>
+<p>「子程序」是什么呢：比如我们写了很多行代码，其中有 <code>几行代码</code> 是用来完成一些 <code>特定的功能</code>，那么这 <code>几行代码</code> 就取了个名字，叫做「子程序」—— <code>routine</code></p>
+<p>至于为什么叫 <code>routine</code>，这就跟汇编有关了</p>
+<p>而这个子程序又分为 3 种，分别为：<code>函数( Function )</code>、<code>过程( Procedure )</code>、<code>方法( Method )</code></p>
+<ul>
+<li>函数：如果一个「子程序」有返回值，它就叫 <code>函数</code></li>
+<li>过程：如果一个「子程序」没有返回值，它就叫 <code>过程</code> (因为它只走了个过程，没有任何返回)</li>
+<li>方法：如果一个「子程序」在一个 <code>类</code> 中或者 <code>对象</code> 中，就叫 <code>方法</code></li>
+</ul>
+<p>而在 JavaScript 中，我们没有「子程序」，只有 <code>函数</code> 和 <code>方法</code></p>
+<p>Q：那为什么没有过程呢？<br>A：因为 JS 的所有 <code>函数</code> 都有 <code>返回值</code>，因为即使你不 <code>return</code>，也是默认返回 <code>undefined</code></p>
+<p>Q：而函数的返回值是由什么决定的呢？<br>A：<code>调用时</code> 输入的参数 和 <code>定义时</code> 的环境</p>
+<h2 id="什么是闭包"><a href="#什么是闭包" class="headerlink" title="什么是闭包"></a>什么是闭包</h2><p>我在这篇博客中写的很详细了 <a target="_blank" rel="noopener" href="https://heycn.github.io/2022/03/02/js-closure/">用人话阐述 JS 中的「闭包」</a> 请看一遍</p>
+<p>我再说一下 <code>闭包</code> 的特点吧</p>
+<ol>
+<li>能让一个 <code>函数</code> 维持住一个 <code>变量</code></li>
+<li>但并不能维持这个变量的 <code>值</code></li>
+<li>尤其是变量的值会 <code>改变</code> 的时候</li>
+</ol>
+<p>那我们来玩玩这个闭包吧！</p>
+<h2 id="对象是穷人的闭包"><a href="#对象是穷人的闭包" class="headerlink" title="对象是穷人的闭包"></a>对象是穷人的闭包</h2><ul>
+<li>对象也可以维持住一个变量</li>
+<li>如果一门语言不支持闭包，你可以用对象代理</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用对象</span></span><br><span class="line"><span class="keyword">const</span> obj = &#123;</span><br><span class="line">  <span class="attr">_name</span>: <span class="string">&#x27;张三&#x27;</span>,</span><br><span class="line">  <span class="title function_">printName</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">_name</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用闭包</span></span><br><span class="line"><span class="keyword">const</span> printName = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> name = <span class="string">&#x27;李四&#x27;</span></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(name)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;()</span><br></pre></td></tr></table></figure>
+
+<h2 id="闭包是穷人的对象"><a href="#闭包是穷人的对象" class="headerlink" title="闭包是穷人的对象"></a>闭包是穷人的对象</h2><ul>
+<li>如果一门语言不支持对象，你可以用闭包代理</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">createPerson</span>(<span class="params">name, age</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">function</span> (<span class="params">key</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (key === <span class="string">&#x27;name&#x27;</span>) <span class="keyword">return</span> name</span><br><span class="line">    <span class="keyword">if</span> (key === <span class="string">&#x27;age&#x27;</span>) <span class="keyword">return</span> age</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> person = <span class="title function_">createPerson</span>(<span class="string">&#x27;Jack&#x27;</span>, <span class="number">18</span>)</span><br><span class="line"><span class="title function_">person</span>(<span class="string">&#x27;name&#x27;</span>) <span class="comment">// Jack</span></span><br><span class="line"><span class="title function_">person</span>(<span class="string">&#x27;age&#x27;</span>) <span class="comment">// 18</span></span><br></pre></td></tr></table></figure>
+
+<p>你看，这个 <code>person</code> 是不是就很像一个对象？</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>所以，<code>闭包</code> 在函数里面就是用来维持一个变量的，如果用 <code>对象</code> 也可以代替 <code>闭包</code>，用 <code>闭包</code> 也可以代替 <code>对象</code>，它们是可以用来互相代替的</p>
+<p>感谢阅读，下次见 :)</p>
+</div>
+   
+  <a id="older" class="blog-nav" href="/2023/02/09/method-chaining/">OLDER&nbsp;&gt;</a>
+   
+  <a id="newer" class="blog-nav" href="/2023/03/13/simplify-javascript-code/">&lt;&nbsp;NEWER</a>
+   
+  <br />
+  <a href="/archives">cd ../</a>
+</div>
+
+        <div class="footer">
+  
+  <div class="footer-more">
+      
+  </div>
+  
+  <div class="footer-more">
+      
+  </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+
+
+    </div>
+  </body>
+</html>

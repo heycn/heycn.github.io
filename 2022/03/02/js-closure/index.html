@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="陈楠的博客" />
+  <meta name="author" content="陈楠" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      用人话阐述 JS 中的「闭包」 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="head">
+        <div class="avatar">
+  <a href="/">
+    <img src="/images/avatar.png" alt="" />
+  </a>
+</div>
+
+        <p class="links">
+  
+    <a title="Blog" target="" href="/archives">
+      <i class="iconfont icon-emoji-friendly"></i>
+      Blog
+    </a>
+  
+    <a title="Docs" target="_blank" href="/">
+      <i class="iconfont icon-tags"></i>
+      Docs
+    </a>
+  
+    <a title="GitHub" target="_blank" href="https://github.com/heycn">
+      <i class="iconfont icon-github"></i>
+      GitHub
+    </a>
+  
+    <a title="WeChat" target="_blank" href="/images/wechat.jpg">
+      <i class="iconfont icon-wechat"></i>
+      WeChat
+    </a>
+  
+    <a title="Twitter" target="_blank" href="https://twitter.com/heycn_112">
+      <i class="iconfont icon-twitter"></i>
+      Twitter
+    </a>
+  
+    <a title="Email" target="" href="mailto:heycn@foxmail.com">
+      <i class="iconfont icon-envelope"></i>
+      Email
+    </a>
+  
+</p>
+
+      </div>
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [
+        ['$', '$'],
+        ['\\(', '\\)']
+      ]
+    }
+  }
+</script>
+
+<div class="post">
+  <h1 class="post-title">用人话阐述 JS 中的「闭包」</h1>
+  <h3 class="date">Mar 02, 2022</h3>
+  <div class="content markdown-body"><blockquote>
+<p>网上许多文章解释得太官方了，很简单的东西讲得很难理解</p>
+<p>当做唠嗑吧</p>
+</blockquote>
+<p>适合初学者阅读。</p>
+<hr>
+<p>先明白这么个东西：对于一个函数来说，变量分为「全部变量」、「局部变量&#x2F;本地变量」、「自由变量」</p>
+<h2 id="是什么"><a href="#是什么" class="headerlink" title="是什么"></a>是什么</h2><p>闭包是 JS 的一种<code>「语法特性」</code></p>
+<blockquote>
+<p>闭包 &#x3D; 函数 + 自由变量</p>
+</blockquote>
+<p>或者：<br>一个函数<code>访问了函数外的变量</code>，就形成了闭包</p>
+<p>JS 所有函数都支持闭包</p>
+<h2 id="怎么做"><a href="#怎么做" class="headerlink" title="怎么做"></a>怎么做</h2><h3 id="答案："><a href="#答案：" class="headerlink" title="答案："></a>答案：</h3><ul>
+<li>声明一个变量等于一个立即执行函数</li>
+<li>然后立即执行函数里面声明一个变量 count</li>
+<li>再声明一个函数对外面的 count 进行操作</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> add1 = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> count</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">function</span> <span class="title function_">add2</span>(<span class="params"></span>) &#123; <span class="comment">// 访问了外部变量的函数</span></span><br><span class="line">    count += <span class="number">1</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>或者这么理解：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> count</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">add</span>(<span class="params"></span>) &#123; <span class="comment">// 访问了外部变量的函数</span></span><br><span class="line">  count += <span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>把上面代码放在「非全局环境」里，就是闭包</p>
+<p>闭包不是 count，也不是 add，而是 count + add 组成的整体</p>
+<hr>
+<h3 id="思路（可忽略）："><a href="#思路（可忽略）：" class="headerlink" title="思路（可忽略）："></a>思路（可忽略）：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> count</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">add</span>(<span class="params"></span>) &#123;</span><br><span class="line">  count += <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 这个 count 是全局变量，那函数本来就可以访问全部变量的呀？</span></span><br><span class="line"><span class="comment">// 所以这并不是一个闭包，这是全局变量的特性</span></span><br></pre></td></tr></table></figure>
+
+<p>那怎么做到是一个自由变量呢？<br>那就让它不是全局变量就行了呗！</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="keyword">let</span> count</span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">add</span>(<span class="params"></span>) &#123;</span><br><span class="line">    count += <span class="number">1</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 现在 count 它是一个局部变量，不是全局变量了</span></span><br><span class="line"><span class="comment">// 所以这才是真正的闭包</span></span><br></pre></td></tr></table></figure>
+
+<p>再说说什么是自由变量：</p>
+<ul>
+<li>看以上代码</li>
+<li>count 既不是全局变量，也不是 add 函数 的局部变量</li>
+<li>那么 count 就是 add 函数 的自由变量</li>
+</ul>
+<p>那么这个时候 add 再去访问 count，那就形成了闭包</p>
+<h2 id="解决了什么问题"><a href="#解决了什么问题" class="headerlink" title="解决了什么问题"></a>解决了什么问题</h2><p>那这只是个语法特性啊，有什么用呢？<br>光语法特性当然没有什么用，重点看在什么场景去用它</p>
+<h3 id="举个例子："><a href="#举个例子：" class="headerlink" title="举个例子："></a>举个例子：</h3><ul>
+<li>假设我们现在要做一个游戏，叫魂斗罗</li>
+<li>那么魂斗罗每人有 3 条命，那声明一个全部变量(3 条命)</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">window</span>.<span class="property">lives</span> = <span class="number">3</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">这里写游戏代码</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>那这个游戏代码还能去写吗？不可以</li>
+<li>如果你不小心写了 <code>window.lives = -100</code>，那就完了？你的游戏就有 BUG 了！</li>
+<li>所以你把 lives 作为一个全部变量是很危险的，所以我们需要把它 ‘藏’ 在一个地方，然后只让他加一条命或减一条命，这样会更安全一点</li>
+<li>那要怎么做？那就搞一个局部变量呗。怎么做呢？</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="keyword">let</span> lives = <span class="number">3</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">这里是游戏代码</span></span><br><span class="line"><span class="comment">lives = -100</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>这样你就访问不到 lives 了，你游戏代码改成 -100，没用！</li>
+<li>但这我也访问不了，我想知道我现在有几条命，也不知道呀，怎么办？</li>
+<li>给几个接口嘛，我写几个接口：获取生命，减少生命，增加生命</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="keyword">let</span> lives = <span class="number">3</span></span><br><span class="line">  <span class="variable language_">window</span>.<span class="property">getLives</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123; <span class="keyword">return</span> lives &#125; <span class="comment">// 获取生命</span></span><br><span class="line">  <span class="variable language_">window</span>.<span class="property">die</span> = <span class="function">() =&gt;</span> &#123; lives -= <span class="number">1</span> &#125; <span class="comment">//减少生命</span></span><br><span class="line">  <span class="variable language_">window</span>.<span class="property">award</span> = <span class="function">() =&gt;</span> &#123; lives += <span class="number">1</span> &#125; <span class="comment">// 增加生命</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">这里是游戏代码</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="comment">// 诶？这不就是形成闭包了嘛？</span></span><br><span class="line"><span class="comment">// 但是重点我们不是这个闭包，而是获取这些接口，那怎么获取呢？看下面</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">window</span>.<span class="title function_">getLives</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment">// 所以实现了什么效果：你不能直接访问 lives，但可以使用我给你提供的接口来访问 lives</span></span><br></pre></td></tr></table></figure>
+
+<p>至此，我们就实现了一个完整的「闭包引用」，也是闭包的作用</p>
+<h3 id="解决了什么问题："><a href="#解决了什么问题：" class="headerlink" title="解决了什么问题："></a>解决了什么问题：</h3><ol>
+<li>避免污染全局环境&#x2F;隐藏变量（因为我用的是局部变量，用词真有意思…）</li>
+<li>提供对局部变量的间接访问&#x2F;暴露访问器（因为上面代码只能 count +&#x3D; 1，不能 count -&#x3D; 1）</li>
+<li>维持变量，使其不被垃圾回收（不被回收不是挺正常的事吗…）</li>
+</ol>
+<h2 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h2><p>简单，好用<br>不需要学习新知识，新语法</p>
+<h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><p>闭包 <code>使用不当</code> 可能造成内存泄漏<br>绝对不是：闭包会造成内存泄漏，而是「使用不当」会造成内存泄漏</p>
+<p>「闭包造成内存泄漏」这句话好多文章都有说过，这是曾经旧版本 IE 的 bug 导致的问题。。。</p>
+<h3 id="举例说明："><a href="#举例说明：" class="headerlink" title="举例说明："></a>举例说明：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">test</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> x = &#123; <span class="attr">name</span>: <span class="string">&#x27;x&#x27;</span> &#125;</span><br><span class="line">  <span class="keyword">var</span> y = &#123; <span class="attr">name</span>: <span class="string">&#x27;y&#x27;</span>, <span class="attr">content</span>: <span class="string">&#x27;...很长很长的内容...&#x27;</span> &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">function</span> <span class="title function_">fn</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> myFn = <span class="title function_">test</span>() <span class="comment">// myFn 就是 fn 了</span></span><br><span class="line"><span class="keyword">const</span> myX = <span class="title function_">myFn</span>() <span class="comment">// myX 就是 x 了</span></span><br><span class="line"><span class="comment">// 请问，y 会消失吗？</span></span><br></pre></td></tr></table></figure>
+
+<p>对于一个正常的浏览器来说，y 会在<strong>一段时间后</strong>自动消失（被垃圾回收器给回收掉）<br>但旧版本的 IE 并不是正常的浏览器，所以是 IE 的问题</p>
+<p>只是有些浏览器对闭包的支持不够好，但是绝对不是「闭包造成内存泄漏」，好吧？</p>
+<h2 id="怎么解决缺点"><a href="#怎么解决缺点" class="headerlink" title="怎么解决缺点"></a>怎么解决缺点</h2><p>慎用，少用，不用（既然有些浏览器对闭包支持不够友好，那我就少用呗）<br>但我觉得闭包是没有缺点的，如果有，那就是浏览器的问题</p>
+<p>最后推荐一篇方大的文章：<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/22486908">《JS 中的闭包是什么？》—— 方应杭</a></p>
+<p>完。</p>
+<p>感谢阅读，下次见 :)</p>
+</div>
+   
+  <a id="older" class="blog-nav" href="/2022/01/16/immediately-invoked-function-expression/">OLDER&nbsp;&gt;</a>
+   
+  <a id="newer" class="blog-nav" href="/2022/03/09/react-virtual-dom/">&lt;&nbsp;NEWER</a>
+   
+  <br />
+  <a href="/archives">cd ../</a>
+</div>
+
+        <div class="footer">
+  
+  <div class="footer-more">
+      
+  </div>
+  
+  <div class="footer-more">
+      
+  </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+
+
+    </div>
+  </body>
+</html>

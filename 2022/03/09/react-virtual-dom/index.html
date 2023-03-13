@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="陈楠的博客" />
+  <meta name="author" content="陈楠" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      浅析「React 虚拟 Dom」 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="head">
+        <div class="avatar">
+  <a href="/">
+    <img src="/images/avatar.png" alt="" />
+  </a>
+</div>
+
+        <p class="links">
+  
+    <a title="Blog" target="" href="/archives">
+      <i class="iconfont icon-emoji-friendly"></i>
+      Blog
+    </a>
+  
+    <a title="Docs" target="_blank" href="/">
+      <i class="iconfont icon-tags"></i>
+      Docs
+    </a>
+  
+    <a title="GitHub" target="_blank" href="https://github.com/heycn">
+      <i class="iconfont icon-github"></i>
+      GitHub
+    </a>
+  
+    <a title="WeChat" target="_blank" href="/images/wechat.jpg">
+      <i class="iconfont icon-wechat"></i>
+      WeChat
+    </a>
+  
+    <a title="Twitter" target="_blank" href="https://twitter.com/heycn_112">
+      <i class="iconfont icon-twitter"></i>
+      Twitter
+    </a>
+  
+    <a title="Email" target="" href="mailto:heycn@foxmail.com">
+      <i class="iconfont icon-envelope"></i>
+      Email
+    </a>
+  
+</p>
+
+      </div>
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [
+        ['$', '$'],
+        ['\\(', '\\)']
+      ]
+    }
+  }
+</script>
+
+<div class="post">
+  <h1 class="post-title">浅析「React 虚拟 Dom」</h1>
+  <h3 class="date">Mar 09, 2022</h3>
+  <div class="content markdown-body"><blockquote>
+<p>本篇博客用来记录我的学习成果<br>防止遗忘，</p>
+</blockquote>
+<h2 id="是什么"><a href="#是什么" class="headerlink" title="是什么"></a>是什么</h2><p>虚拟 DOM 就是虚拟节点，React 用 <strong>JS 对象</strong>来<strong>模拟 DOM 节点</strong>，然后将其<strong>渲染成真实的 DOM 节点</strong>，它<strong>本质上是一个 JS 对象</strong>。</p>
+<h2 id="怎么做"><a href="#怎么做" class="headerlink" title="怎么做"></a>怎么做</h2><h3 id="1-模拟一个节点"><a href="#1-模拟一个节点" class="headerlink" title="1. 模拟一个节点"></a>1. 模拟一个节点</h3><p>使用 JSX 语法写出来的 div 其实就是一个 <strong>虚拟节点</strong></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id=<span class="string">&#x27;x&#x27;</span>&gt;</span><br><span class="line">  <span class="language-xml"><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&#x27;red&#x27;</span>&gt;</span> hi <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+
+<p>上面代码会得到这样一个对象：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">tag</span>: <span class="string">&#x27;div&#x27;</span>,</span><br><span class="line">  <span class="attr">props</span>: &#123;</span><br><span class="line">    <span class="attr">id</span>: <span class="string">&#x27;x&#x27;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">children</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">tag</span>: <span class="string">&#x27;span&#x27;</span></span><br><span class="line">      <span class="attr">props</span>: &#123;</span><br><span class="line">        <span class="attr">className</span>: <span class="string">&#x27;red&#x27;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">children</span>: [</span><br><span class="line">        <span class="string">&#x27;hi&#x27;</span></span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这是因为，JSX 语法会被转译为 createElement 函数的调用（也叫 h 函数），如下：</p>
+<p>这些代码是使用 babel 或者 webpack 的一些 loader 实现的</p>
+<p>实际上，我们是调用了 createElement 来得到的一个虚拟 DOM，只不过这个 createElement 可以嵌套</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">React</span>.<span class="title function_">createElement</span>(<span class="string">&#x27;div&#x27;</span>, &#123; <span class="attr">id</span>: <span class="string">&#x27;x&#x27;</span> &#125;, <span class="title class_">Create</span>.<span class="title function_">createElement</span>(<span class="string">&#x27;span&#x27;</span>, &#123; <span class="attr">class</span>: <span class="string">&#x27;red&#x27;</span> &#125;, <span class="string">&#x27;hi&#x27;</span>))</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-将虚拟节点渲染为正式的节点"><a href="#2-将虚拟节点渲染为正式的节点" class="headerlink" title="2. 将虚拟节点渲染为正式的节点"></a>2. 将虚拟节点渲染为正式的节点</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="comment">// 如果是字符串或者数字，那么就创建文本节点</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> vdom === <span class="string">&#x27;string&#x27;</span> || <span class="keyword">typeof</span> vdom === <span class="string">&#x27;number&#x27;</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">document</span>.<span class="title function_">createTextNode</span>(vdom)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> &#123; tag, props, children &#125; = vdom</span><br><span class="line">  <span class="comment">// 创建真实节点</span></span><br><span class="line">  <span class="keyword">const</span> element = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(tag)</span><br><span class="line">  <span class="comment">// 设置属性</span></span><br><span class="line">  <span class="title function_">setProps</span>(element, props)</span><br><span class="line">  <span class="comment">// 遍历子节点，并获取创建真实 DOM，插入到当前节点</span></span><br><span class="line">  children.<span class="title function_">map</span>(render).<span class="title function_">forEach</span>(element.<span class="property">appendChild</span>.<span class="title function_">bind</span>(element))</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 虚拟 DOM 中缓存真实 DOM 节点</span></span><br><span class="line">  vdom.<span class="property">dom</span> = element</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h2><ol>
+<li>让 DOM 操作的性能更好：通过 DOM diff 算法，减少不必要的 DOM 操作</li>
+<li>解决了 DOM 操作不方便问题：以前需要记很多 DOM API，现在只有 setState</li>
+<li>为 React 带来了跨平台能力，因为虚拟节点除了渲染真实节点，还可以渲染为其他东西</li>
+</ol>
+<h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><ol>
+<li>性能要求极高的地方，还是需要用真实 DOM 操作（但是目前没有这种需求）</li>
+<li>React 为虚拟 DOM 创造了 <strong>合成事件</strong>，跟原生 DOM 事件不太一样，工作中要额外注意</li>
+<li><ol>
+<li>所有 React 事件都绑定到根元素，自动实现事件委托</li>
+<li>如果混用合成事件和原生 DOM 事件，有可能会出现 BUG</li>
+</ol>
+</li>
+</ol>
+<h2 id="如何解决缺点"><a href="#如何解决缺点" class="headerlink" title="如何解决缺点"></a>如何解决缺点</h2><p>。。。用 Vue3</p>
+<p>感谢阅读，下次见 :)</p>
+</div>
+   
+  <a id="older" class="blog-nav" href="/2022/03/02/js-closure/">OLDER&nbsp;&gt;</a>
+   
+  <a id="newer" class="blog-nav" href="/2022/03/23/10min-regular-expression/">&lt;&nbsp;NEWER</a>
+   
+  <br />
+  <a href="/archives">cd ../</a>
+</div>
+
+        <div class="footer">
+  
+  <div class="footer-more">
+      
+  </div>
+  
+  <div class="footer-more">
+      
+  </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+
+
+    </div>
+  </body>
+</html>

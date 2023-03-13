@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="陈楠的博客" />
+  <meta name="author" content="陈楠" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      浅析「TCP 三次握手、四次挥手」 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="head">
+        <div class="avatar">
+  <a href="/">
+    <img src="/images/avatar.png" alt="" />
+  </a>
+</div>
+
+        <p class="links">
+  
+    <a title="Blog" target="" href="/archives">
+      <i class="iconfont icon-emoji-friendly"></i>
+      Blog
+    </a>
+  
+    <a title="Docs" target="_blank" href="/">
+      <i class="iconfont icon-tags"></i>
+      Docs
+    </a>
+  
+    <a title="GitHub" target="_blank" href="https://github.com/heycn">
+      <i class="iconfont icon-github"></i>
+      GitHub
+    </a>
+  
+    <a title="WeChat" target="_blank" href="/images/wechat.jpg">
+      <i class="iconfont icon-wechat"></i>
+      WeChat
+    </a>
+  
+    <a title="Twitter" target="_blank" href="https://twitter.com/heycn_112">
+      <i class="iconfont icon-twitter"></i>
+      Twitter
+    </a>
+  
+    <a title="Email" target="" href="mailto:heycn@foxmail.com">
+      <i class="iconfont icon-envelope"></i>
+      Email
+    </a>
+  
+</p>
+
+      </div>
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [
+        ['$', '$'],
+        ['\\(', '\\)']
+      ]
+    }
+  }
+</script>
+
+<div class="post">
+  <h1 class="post-title">浅析「TCP 三次握手、四次挥手」</h1>
+  <h3 class="date">Nov 27, 2021</h3>
+  <div class="content markdown-body"><p>此文章仅是表面层解释 三次握手、四次挥手，并不深入！</p>
+<h2 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h2><blockquote>
+<p>建立 TCP 连接时，服务器(server) 与 客户端(client) 会经历的过程<br>三次握手是为了保证建立起一个 安全 可靠 的连接</p>
+</blockquote>
+<ul>
+<li>第一次握手：服务器 属于关闭状态，客户端 主动向 服务器 发送一个报文(SYN)，<code>想与服务端建立起一个新的连接</code>，并且等待服务器确认</li>
+<li>第二次握手：服务器 接收 客户端 发来的 报文，确认客户端的 报文，并且把 <code>消息确认包 发送给客户端</code>，但是服务端此时不知道服务端向客户端发送的消息能不能收到</li>
+<li>第三次握手：客户端收到 消息确认包 之后，需要 <code>继续给服务端一个消息包</code>，并且建立起连接</li>
+</ul>
+<h2 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a>四次挥手</h2><blockquote>
+<p>关闭 TCP 连接时，服务器(server) 与 客户端(client) 会经历的过程<br>四次挥手是为了确保连接安全的断开</p>
+</blockquote>
+<ul>
+<li>第一次挥手：<code>客户端想要与服务端断开连接</code>，客户端 向 服务端发送一个报文，表示想要与服务端断开连接</li>
+<li>第二次挥手：服务端收到报文之后，知道客户端想要与客户端断开连接，但是此时 <code>服务端可能还有剩下的一些数据没有传输</code>，服务端向客户端发送 确认消息包，告诉 客户端 已确认但是还有剩下的数据没传完，我传完之后再告诉你</li>
+<li>第三次挥手：服务端做好与客户端的准备之后，服务端发送一个断开连接的报文给客户端，表示 <code>服务端已经做好断开链接的准备</code></li>
+<li>第四次挥手：客户端收到 服务端发来的报文之后，需要发送一个 消息确认的报文 给服务端，<code>表示断开连接</code></li>
+</ul>
+<h2 id="TCP-是什么"><a href="#TCP-是什么" class="headerlink" title="TCP 是什么"></a>TCP 是什么</h2><ul>
+<li>全称是：传输内容协议</li>
+<li>TCP 属于传输层，HTTP 属于应用层</li>
+<li>传输层建立端到端的链接</li>
+<li>例如：我访问 baidu.com，TCP 就是模拟了我和 baidu.com 之间的车道，这个车道可以传输数据</li>
+</ul>
+<p>感谢阅读，下次见 :)</p>
+</div>
+   
+  <a id="older" class="blog-nav" href="/2021/11/18/debounce-throttle/">OLDER&nbsp;&gt;</a>
+   
+  <a id="newer" class="blog-nav" href="/2021/12/09/deep-clone/">&lt;&nbsp;NEWER</a>
+   
+  <br />
+  <a href="/archives">cd ../</a>
+</div>
+
+        <div class="footer">
+  
+  <div class="footer-more">
+      
+  </div>
+  
+  <div class="footer-more">
+      
+  </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+
+
+    </div>
+  </body>
+</html>

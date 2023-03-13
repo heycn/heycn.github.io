@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="陈楠的博客" />
+  <meta name="author" content="陈楠" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      我的请求封装思路 - HttpClient 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="head">
+        <div class="avatar">
+  <a href="/">
+    <img src="/images/avatar.png" alt="" />
+  </a>
+</div>
+
+        <p class="links">
+  
+    <a title="Blog" target="" href="/archives">
+      <i class="iconfont icon-emoji-friendly"></i>
+      Blog
+    </a>
+  
+    <a title="Docs" target="_blank" href="/">
+      <i class="iconfont icon-tags"></i>
+      Docs
+    </a>
+  
+    <a title="GitHub" target="_blank" href="https://github.com/heycn">
+      <i class="iconfont icon-github"></i>
+      GitHub
+    </a>
+  
+    <a title="WeChat" target="_blank" href="/images/wechat.jpg">
+      <i class="iconfont icon-wechat"></i>
+      WeChat
+    </a>
+  
+    <a title="Twitter" target="_blank" href="https://twitter.com/heycn_112">
+      <i class="iconfont icon-twitter"></i>
+      Twitter
+    </a>
+  
+    <a title="Email" target="" href="mailto:heycn@foxmail.com">
+      <i class="iconfont icon-envelope"></i>
+      Email
+    </a>
+  
+</p>
+
+      </div>
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [
+        ['$', '$'],
+        ['\\(', '\\)']
+      ]
+    }
+  }
+</script>
+
+<div class="post">
+  <h1 class="post-title">我的请求封装思路 - HttpClient</h1>
+  <h3 class="date">Jun 15, 2022</h3>
+  <div class="content markdown-body"><blockquote>
+<p>这是我的封装思路，请根据口味酌情选择</p>
+</blockquote>
+<p>前端 hppt 请求目前比较流行 <code>Axios</code>，但实际上不管使用什么请求库，封装思路都是一样的</p>
+<p>我不确定我以后的请求库会不会改变，而且脑子里有个思路(具体在下面)，所以我在这里封装了一个中间层 ——— HttpClient</p>
+<p>目的是可以隔离对 Axios 的依赖</p>
+<h1 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h1><blockquote>
+<p>封装目的就是 DRY：Dont Repeat Yourself！</p>
+</blockquote>
+<p>除了具体的业务，其他的逻辑都应该放在封装层<br>输出一个对象，而这个对象符合当前业务的所有需求</p>
+<h2 id="一-封装-HttpClient-中间层"><a href="#一-封装-HttpClient-中间层" class="headerlink" title="一. 封装 HttpClient 中间层"></a>一. 封装 HttpClient 中间层</h2><blockquote>
+<p>虽然说，现在请求库是用的 Axios，但是，我做一个中间层，不直接用 Axios，我使用一个叫 HttpClient 的类，对 Axios 进行一次封装</p>
+</blockquote>
+<p>这样的好处有两个：</p>
+<ol>
+<li>增强对代码的控制：HttpClient 中间层是由我封装的，会比较符合我的习惯，增强对代码的控制</li>
+<li>可以修改参数：Axios 的参数怎么传都写死了，如果我们有个中间层来做一些适配，就算有一天我不用 Axios 了，比如：fetch、useRequest、SWR… 我们的代码都不用改，我们只需要改 HttpClient 这个类</li>
+</ol>
+<p>当然，我只是建议</p>
+<h2 id="二-统一的错误处理"><a href="#二-统一的错误处理" class="headerlink" title="二. 统一的错误处理"></a>二. 统一的错误处理</h2><p>那我们有哪些错误需要处理呢？</p>
+<p>比如我们发送请求太频繁了，会得到一个 429 状态码，那我们只要看到这个状态码，我们就直接提示 “你的发送得频繁啦！”</p>
+<p>再比如，401,，这是用户请求了一个接口，但是未登录，有可能就是那一瞬间，登录过期了，那我们一收到 401 状态码，我们就可以提示用户，问用户登录过期或者未登录，要不要登录，确定或取消</p>
+<p>再比如，403，这是没有权限，那这一样也是弹个框，或者跳转某个页面</p>
+<p>再比如，500 502 503，我们可以直接提示：“抱歉，服务器繁忙，请稍后再试”</p>
+<p>当然，还有其他很多状态码，这不重要，重要的是我们有个地方可以统一地进行处理</p>
+<h2 id="三-加载中"><a href="#三-加载中" class="headerlink" title="三. 加载中"></a>三. 加载中</h2><p>我们很多时候希望用户点击提交，或点击发送的时候，出现一个 loading 的图案，可以让用户耐心的等待，免得烦躁</p>
+<p>那我们的请求开始，总会有请求结束的时候，我们何妨不统一做一个处理呢？</p>
+<h2 id="四-其他"><a href="#四-其他" class="headerlink" title="四. 其他"></a>四. 其他</h2><p>其他的还有：权限控制、Token… 等，思路都和上面一样，这里主要就看个人的项目需求了</p>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><h2 id="一-创建-HttpClient"><a href="#一-创建-HttpClient" class="headerlink" title="一. 创建 HttpClient"></a>一. 创建 HttpClient</h2><h3 id="1-找一个文件夹，创建一个叫-HttpClient-ts-的文件，当然，名字的定义无所谓"><a href="#1-找一个文件夹，创建一个叫-HttpClient-ts-的文件，当然，名字的定义无所谓" class="headerlink" title="1. 找一个文件夹，创建一个叫 HttpClient.ts 的文件，当然，名字的定义无所谓"></a>1. 找一个文件夹，创建一个叫 <code>HttpClient.ts</code> 的文件，当然，名字的定义无所谓</h3><h3 id="2-然后在文件中写："><a href="#2-然后在文件中写：" class="headerlink" title="2. 然后在文件中写："></a>2. 然后在文件中写：</h3><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">Http</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>为什么我使用 class？<br>这个无所谓了，用函数也行，我用 class 是因为里面还可以再封装一个函数，酌情选择吧</p>
+</blockquote>
+<h3 id="3-统一接口"><a href="#3-统一接口" class="headerlink" title="3. 统一接口"></a>3. 统一接口</h3><blockquote>
+<p>我们业务大部分都是增删改查，那我就只针对这个写了</p>
+</blockquote>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">Http</span> &#123;</span><br><span class="line">  <span class="title function_">get</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line">  <span class="title function_">post</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line">  <span class="title function_">patch</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line">  <span class="title function_">delete</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>为什么不写 put？<br>其实 <code>put</code>、<code>patch</code>、<code>post</code> 他们非常类似，我们只要挑选其中两个：一个用于 <code>创建</code>，一个用于 <code>更新</code>，根据业务商量就行了</p>
+</li>
+<li><p><code>put</code> 和 <code>patch</code> 的区别？<br>可以这么理解： <code>put</code> 是一个整体更新（我传一个对象，这个对象就要整体更新数据库的记录），而 <code>patch</code> 是部分更新（我传一个对象，我没传的部分你就给我留下来，传了的部分就覆盖之前的）</p>
+</li>
+</ul>
+<h3 id="4-构造"><a href="#4-构造" class="headerlink" title="4. 构造"></a>4. 构造</h3><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">Http</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params">baseUrl: <span class="built_in">string</span></span>) &#123;&#125;</span><br><span class="line">  <span class="title function_">get</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line">  <span class="title function_">post</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line">  <span class="title function_">patch</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line">  <span class="title function_">delete</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>constructor</code> 传一些基础的参数，比如：<code>BaseUR</code></p>
+<h3 id="5-实例"><a href="#5-实例" class="headerlink" title="5. 实例"></a>5. 实例</h3><p>现在我们的底层请求还是用到了 Axios，所以我们还得有 Axios 这个 <code>实例</code></p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">Http</span> &#123;</span><br><span class="line">  <span class="attr">instance</span>: <span class="title class_">AxiosInstance</span></span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params">baseUrl: <span class="built_in">string</span></span>) &#123;&#125;</span><br><span class="line">  <span class="title function_">get</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line">  <span class="title function_">post</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line">  <span class="title function_">patch</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line">  <span class="title function_">delete</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-初始化方法"><a href="#6-初始化方法" class="headerlink" title="6. 初始化方法"></a>6. 初始化方法</h3><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> <span class="title class_">JSON</span>Value = <span class="built_in">string</span> | <span class="built_in">number</span> | <span class="literal">null</span> | <span class="built_in">boolean</span> | <span class="title class_">JSON</span>Value[] | &#123; [<span class="attr">key</span>: <span class="built_in">string</span>]: <span class="title class_">JSON</span>Value &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">Http</span> &#123;</span><br><span class="line">  <span class="attr">instance</span>: <span class="title class_">AxiosInstance</span></span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params">baseUrl: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">instance</span> = axios.<span class="title function_">create</span>(&#123;</span><br><span class="line">      baseURL,</span><br><span class="line">      <span class="attr">timeout</span>: <span class="number">10000</span></span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  get&lt;R = <span class="built_in">unknown</span>&gt;(<span class="attr">url</span>: <span class="built_in">string</span>, query?: <span class="title class_">Record</span>&lt;<span class="built_in">string</span>, <span class="built_in">number</span> | <span class="built_in">string</span>&gt;, config?: <span class="title class_">Omit</span>&lt;<span class="title class_">AxiosRequestConfig</span>, <span class="string">&#x27;params&#x27;</span> | <span class="string">&#x27;url&#x27;</span> | <span class="string">&#x27;method&#x27;</span>&gt;) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">instance</span>.<span class="property">request</span>&lt;R&gt;(&#123; ...config, url, <span class="attr">params</span>: query, <span class="attr">method</span>: <span class="string">&#x27;get&#x27;</span> &#125;)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  post&lt;R = <span class="built_in">unknown</span>&gt;(<span class="attr">url</span>: <span class="built_in">string</span>, data?: <span class="title class_">Record</span>&lt;<span class="built_in">string</span>, <span class="title class_">JSON</span>Value&gt;, config?: <span class="title class_">Omit</span>&lt;<span class="title class_">AxiosRequestConfig</span>, <span class="string">&#x27;url&#x27;</span> | <span class="string">&#x27;data&#x27;</span> | <span class="string">&#x27;method&#x27;</span>&gt;) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">instance</span>.<span class="property">request</span>&lt;R&gt;(&#123; ...config, url, data, <span class="attr">method</span>: <span class="string">&#x27;post&#x27;</span> &#125;)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  patch&lt;R = <span class="built_in">unknown</span>&gt;(<span class="attr">url</span>: <span class="built_in">string</span>, data?: <span class="title class_">Record</span>&lt;<span class="built_in">string</span>, <span class="title class_">JSON</span>Value&gt;, config?: <span class="title class_">Omit</span>&lt;<span class="title class_">AxiosRequestConfig</span>, <span class="string">&#x27;url&#x27;</span> | <span class="string">&#x27;data&#x27;</span>&gt;) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">instance</span>.<span class="property">request</span>&lt;R&gt;(&#123; ...config, url, data, <span class="attr">method</span>: <span class="string">&#x27;patch&#x27;</span> &#125;)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">delete</span>&lt;R = <span class="built_in">unknown</span>&gt;(<span class="attr">url</span>: <span class="built_in">string</span>, query?: <span class="title class_">Record</span>&lt;<span class="built_in">string</span>, <span class="built_in">string</span>&gt;, config?: <span class="title class_">Omit</span>&lt;<span class="title class_">AxiosRequestConfig</span>, <span class="string">&#x27;params&#x27;</span>&gt;) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">instance</span>.<span class="property">request</span>&lt;R&gt;(&#123; ...config, url, <span class="attr">params</span>: query, <span class="attr">method</span>: <span class="string">&#x27;delete&#x27;</span> &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果我们以后想要换其他的请求库，只需要把 <code>instance</code>，换成其他的方法，就可以了，是不是减少了重构成本？</p>
+<h3 id="7-统一的拦截处理"><a href="#7-统一的拦截处理" class="headerlink" title="7. 统一的拦截处理"></a>7. 统一的拦截处理</h3><p>这里的统一拦截处理我们写在哪呢？<br>答案是：写在哪都可以，由于我用到的接口不只有一个，所以我写在 class 外了</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> <span class="title class_">JSON</span>Value = <span class="built_in">string</span> | <span class="built_in">number</span> | <span class="literal">null</span> | <span class="built_in">boolean</span> | <span class="title class_">JSON</span>Value[] | &#123; [<span class="attr">key</span>: <span class="built_in">string</span>]: <span class="title class_">JSON</span>Value &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">Http</span> &#123;</span><br><span class="line">  <span class="attr">instance</span>: <span class="title class_">AxiosInstance</span></span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params">baseUrl: <span class="built_in">string</span></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">instance</span> = axios.<span class="title function_">create</span>(&#123;</span><br><span class="line">      baseURL,</span><br><span class="line">      <span class="attr">timeout</span>: <span class="number">10000</span></span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  get&lt;R = <span class="built_in">unknown</span>&gt;(<span class="attr">url</span>: <span class="built_in">string</span>, query?: <span class="title class_">Record</span>&lt;<span class="built_in">string</span>, <span class="built_in">number</span> | <span class="built_in">string</span>&gt;, config?: <span class="title class_">Omit</span>&lt;<span class="title class_">AxiosRequestConfig</span>, <span class="string">&#x27;params&#x27;</span> | <span class="string">&#x27;url&#x27;</span> | <span class="string">&#x27;method&#x27;</span>&gt;) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">instance</span>.<span class="property">request</span>&lt;R&gt;(&#123; ...config, url, <span class="attr">params</span>: query, <span class="attr">method</span>: <span class="string">&#x27;get&#x27;</span> &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">  post&lt;R = <span class="built_in">unknown</span>&gt;(<span class="attr">url</span>: <span class="built_in">string</span>, data?: <span class="title class_">Record</span>&lt;<span class="built_in">string</span>, <span class="title class_">JSON</span>Value&gt;, config?: <span class="title class_">Omit</span>&lt;<span class="title class_">AxiosRequestConfig</span>, <span class="string">&#x27;url&#x27;</span> | <span class="string">&#x27;data&#x27;</span> | <span class="string">&#x27;method&#x27;</span>&gt;) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">instance</span>.<span class="property">request</span>&lt;R&gt;(&#123; ...config, url, data, <span class="attr">method</span>: <span class="string">&#x27;post&#x27;</span> &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">  patch&lt;R = <span class="built_in">unknown</span>&gt;(<span class="attr">url</span>: <span class="built_in">string</span>, data?: <span class="title class_">Record</span>&lt;<span class="built_in">string</span>, <span class="title class_">JSON</span>Value&gt;, config?: <span class="title class_">Omit</span>&lt;<span class="title class_">AxiosRequestConfig</span>, <span class="string">&#x27;url&#x27;</span> | <span class="string">&#x27;data&#x27;</span>&gt;) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">instance</span>.<span class="property">request</span>&lt;R&gt;(&#123; ...config, url, data, <span class="attr">method</span>: <span class="string">&#x27;patch&#x27;</span> &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">delete</span>&lt;R = <span class="built_in">unknown</span>&gt;(<span class="attr">url</span>: <span class="built_in">string</span>, query?: <span class="title class_">Record</span>&lt;<span class="built_in">string</span>, <span class="built_in">string</span>&gt;, config?: <span class="title class_">Omit</span>&lt;<span class="title class_">AxiosRequestConfig</span>, <span class="string">&#x27;params&#x27;</span>&gt;) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">instance</span>.<span class="property">request</span>&lt;R&gt;(&#123; ...config, url, <span class="attr">params</span>: query, <span class="attr">method</span>: <span class="string">&#x27;delete&#x27;</span> &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> http = <span class="keyword">new</span> <span class="title class_">Http</span>(<span class="string">&#x27;/api/v1&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这里根据自己的业务需求封装</span></span><br><span class="line">http.<span class="property">instance</span>.<span class="property">interceptors</span>.<span class="property">request</span>.<span class="title function_">use</span>(</span><br><span class="line">  <span class="function"><span class="params">config</span> =&gt;</span> &#123;&#125;,</span><br><span class="line">  <span class="function">() =&gt;</span> &#123;&#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">http.<span class="property">instance</span>.<span class="property">interceptors</span>.<span class="property">response</span>.<span class="title function_">use</span>(</span><br><span class="line">  <span class="function"><span class="params">response</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> response</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="function"><span class="params">error</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (error.<span class="property">response</span>) &#123;</span><br><span class="line">      <span class="keyword">const</span> axiosError = error <span class="keyword">as</span> <span class="title class_">AxiosError</span></span><br><span class="line">      <span class="keyword">if</span> (axiosError.<span class="property">response</span>?.<span class="property">status</span> === <span class="number">429</span>) &#123;</span><br><span class="line">        <span class="title function_">alert</span>(<span class="string">&#x27;你太频繁了&#x27;</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">throw</span> error</span><br><span class="line">  &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 如果需要处理错误</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">onError</span> = (<span class="params"></span>) =&gt; &#123;&#125;</span><br><span class="line">cosnt onClickSendValidationCode = <span class="title function_">async</span>() =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> response = <span class="keyword">await</span> http.<span class="title function_">post</span>(<span class="string">&#x27;/validationg_codes&#x27;</span>, &#123; email &#125;)</span><br><span class="line">    .<span class="title function_">catch</span>(onError) <span class="comment">// 失败</span></span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;成功&#x27;</span>) <span class="comment">// 成功</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果在封装的时候处理了错误，我们可以这么写</span></span><br><span class="line">cosnt onClickSendValidationCode = <span class="title function_">async</span>() =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> response = <span class="keyword">await</span> http.<span class="title function_">post</span>(<span class="string">&#x27;/validationg_codes&#x27;</span>, &#123; email &#125;)</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;成功&#x27;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>是不是很方便？<br>是不是很酷？</p>
+<h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><blockquote>
+<p>其实，关于 <code>Axios 的二次封装</code>，网上已经有很多例子了，只不过这是我自己开发，就根据我的需求和思路进行封装</p>
+</blockquote>
+<p>大家酌情选择吧！</p>
+<p>感谢阅读，下次见 :)</p>
+</div>
+   
+  <a id="older" class="blog-nav" href="/2022/03/23/10min-regular-expression/">OLDER&nbsp;&gt;</a>
+   
+  <a id="newer" class="blog-nav" href="/2022/09/01/vite-plugin-svg/">&lt;&nbsp;NEWER</a>
+   
+  <br />
+  <a href="/archives">cd ../</a>
+</div>
+
+        <div class="footer">
+  
+  <div class="footer-more">
+      
+  </div>
+  
+  <div class="footer-more">
+      
+  </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+
+
+    </div>
+  </body>
+</html>

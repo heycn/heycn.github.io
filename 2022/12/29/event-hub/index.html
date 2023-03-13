@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="陈楠的博客" />
+  <meta name="author" content="陈楠" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      来！跟我一起手写 EventHub「发布/订阅模式」 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="head">
+        <div class="avatar">
+  <a href="/">
+    <img src="/images/avatar.png" alt="" />
+  </a>
+</div>
+
+        <p class="links">
+  
+    <a title="Blog" target="" href="/archives">
+      <i class="iconfont icon-emoji-friendly"></i>
+      Blog
+    </a>
+  
+    <a title="Docs" target="_blank" href="/">
+      <i class="iconfont icon-tags"></i>
+      Docs
+    </a>
+  
+    <a title="GitHub" target="_blank" href="https://github.com/heycn">
+      <i class="iconfont icon-github"></i>
+      GitHub
+    </a>
+  
+    <a title="WeChat" target="_blank" href="/images/wechat.jpg">
+      <i class="iconfont icon-wechat"></i>
+      WeChat
+    </a>
+  
+    <a title="Twitter" target="_blank" href="https://twitter.com/heycn_112">
+      <i class="iconfont icon-twitter"></i>
+      Twitter
+    </a>
+  
+    <a title="Email" target="" href="mailto:heycn@foxmail.com">
+      <i class="iconfont icon-envelope"></i>
+      Email
+    </a>
+  
+</p>
+
+      </div>
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [
+        ['$', '$'],
+        ['\\(', '\\)']
+      ]
+    }
+  }
+</script>
+
+<div class="post">
+  <h1 class="post-title">来！跟我一起手写 EventHub「发布/订阅模式」</h1>
+  <h3 class="date">Dec 29, 2022</h3>
+  <div class="content markdown-body"><p><a target="_blank" rel="noopener" href="https://github.com/heycn/wheels/tree/master/eventhub">源码仓库</a></p>
+<h2 id="一、EventHub-是什么"><a href="#一、EventHub-是什么" class="headerlink" title="一、EventHub 是什么"></a>一、<code>EventHub</code> 是什么</h2><ul>
+<li><p><code>EventHub</code> 又叫 <code>发布/ 订阅模式</code>，是用于多个模块之间进行通信的</p>
+</li>
+<li><p>比如我们有两个文件，分别是：<code>1.js</code> 和 <code>2.js</code></p>
+</li>
+<li><p><code>1.js</code> 里有一个函数 <code>fn1</code>，<code>2.js</code> 里有个函数 <code>fn2</code></p>
+</li>
+<li><p><code>fn1</code> 想要调佣 <code>fn2</code>，怎么才能做到呢？</p>
+</li>
+<li><p>如果不用全局变量，那我们就可以使用 <code>EventHub</code></p>
+</li>
+<li><p>那么就可以这么写：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1.js</span></span><br><span class="line"><span class="comment">// 发布</span></span><br><span class="line">fn1 = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  eventhub.<span class="title function_">emit</span>(<span class="string">&#x27;轮到fn2&#x27;</span>) <span class="comment">// 调用 &#x27;轮到fn2&#x27; 事件，eventhub 会通知注册 &#x27;轮到fn2&#x27; 事件的模块</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2.js</span></span><br><span class="line"><span class="comment">// 订阅</span></span><br><span class="line">eventhub.<span class="title function_">on</span>(<span class="string">&#x27;轮到fn2&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 注册/监听 &#x27;轮到fn2&#x27; 事件</span></span><br><span class="line">  <span class="title function_">fn2</span>()</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="二、确定-API"><a href="#二、确定-API" class="headerlink" title="二、确定 API"></a>二、确定 API</h2><blockquote>
+<p>先确认各个 API 的功能，再去实现，再去写代码</p>
+</blockquote>
+<h3 id="API-列表"><a href="#API-列表" class="headerlink" title="API 列表"></a>API 列表</h3><blockquote>
+<p>为什么我用井号？因为 <code>EventHub</code> 是一个类，井号表示是一个对象的属性</p>
+</blockquote>
+<ul>
+<li><p>EventHub#on</p>
+<blockquote>
+<p>注册&#x2F;监听事件</p>
+</blockquote>
+</li>
+<li><p>EventHub#off</p>
+<blockquote>
+<p>取消事件</p>
+</blockquote>
+</li>
+<li><p>EventHub#emit</p>
+<blockquote>
+<p>触发事件</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="三、源码书写过程"><a href="#三、源码书写过程" class="headerlink" title="三、源码书写过程"></a>三、源码书写过程</h2><blockquote>
+<p>采用测试驱动开发：添加测试用例，想办法让测试通过<br>不使用库，而是用非常简单的 <code>console</code> 方式<br>需要全局安装 <code>ts-node@8.3.0</code></p>
+</blockquote>
+<h3 id="1-在根目录下创建-test-index-ts-和-src-index-ts"><a href="#1-在根目录下创建-test-index-ts-和-src-index-ts" class="headerlink" title="1. 在根目录下创建 test/index.ts 和 src/index.ts"></a>1. 在根目录下创建 <code>test/index.ts</code> 和 <code>src/index.ts</code></h3><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// src/index.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">EventHub</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// test/index.ts</span></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">EventHub</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;../src/index&#x27;</span></span><br><span class="line"><span class="keyword">const</span> eventhub = <span class="keyword">new</span> <span class="title class_">EventHub</span>()</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">assert</span>(eventHub <span class="keyword">instanceof</span> <span class="title class_">Object</span> === <span class="literal">true</span>, <span class="string">&#x27;eventHub 是一个对象&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>然后在当前目录下执行 <code>ts-node test/index.ts</code>，如果没有报错，则测试通过</p>
+<h3 id="2-on-和-emit"><a href="#2-on-和-emit" class="headerlink" title="2. on 和 emit"></a>2. <code>on</code> 和 <code>emit</code></h3><h4 id="添加测试用例-on-和-emit"><a href="#添加测试用例-on-和-emit" class="headerlink" title="添加测试用例 on 和 emit"></a>添加测试用例 <code>on</code> 和 <code>emit</code></h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// test/index.ts</span></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">EventHub</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;../src/index&#x27;</span></span><br><span class="line"><span class="keyword">const</span> eventhub = <span class="keyword">new</span> <span class="title class_">EventHub</span>()</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> called = <span class="literal">false</span></span><br><span class="line">eventhub.<span class="title function_">on</span>(<span class="string">&#x27;xxx&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  called = <span class="literal">true</span></span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;called:&#x27;</span> + called)</span><br><span class="line">&#125;)</span><br><span class="line">eventhub.<span class="title function_">emit</span>(<span class="string">&#x27;xxx&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="实现-on-和-emit"><a href="#实现-on-和-emit" class="headerlink" title="实现 on 和 emit"></a>实现 <code>on</code> 和 <code>emit</code></h4><ol>
+<li><code>on</code> 接受两个参数，第一个是 <code>事件名</code>、第二个是一个 <code>回调事件</code></li>
+<li><code>emit</code> 接受一个参数，为 <code>事件名</code></li>
+<li><code>on</code>：当有人订阅了事件之后，我们需要把 <code>事件名</code> 和 <code>事件回调</code> 存在一个 <code>map</code> 里，这里我放在 <code>cache</code> 这个对象<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// cache 的数据结构</span></span><br><span class="line">cache = &#123;</span><br><span class="line">  事件<span class="number">1</span>: [fn1, fn2, fn3],</span><br><span class="line">  事件<span class="number">2</span>: [fn1, fn2, fn3]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><code>emit</code>：触发 <code>事件回调</code>，读取事件名相对应的函数，并且依次调用这些函数</li>
+</ol>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// src/index.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">EventHub</span> &#123;</span><br><span class="line">  cache = &#123;&#125;</span><br><span class="line">  <span class="title function_">on</span>(<span class="params">eventName, fn</span>) &#123;</span><br><span class="line">    <span class="comment">// cache 可能为空，所以需要对这个 cache 初始化：如果 eventName 没有出现过，就初始化成一个数组</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="variable language_">this</span>.<span class="property">cache</span>[eventName] === <span class="literal">undefined</span>) &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">cache</span>[eventName] = []</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 然后把函数放进数组里</span></span><br><span class="line">    <span class="keyword">const</span> array = <span class="variable language_">this</span>.<span class="property">cache</span>[eventName]</span><br><span class="line">    array.<span class="title function_">push</span>(fn)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">emit</span>(<span class="params">eventName</span>) &#123;</span><br><span class="line">    <span class="comment">// 读取 eventName 相对应的函数，但可能 cache 里不存在 eventName，就把他变成一个空数组，所以不管怎么样都是个数组，我们就可以去遍历它</span></span><br><span class="line">    <span class="keyword">let</span> array = <span class="variable language_">this</span>.<span class="property">cache</span>[eventName]</span><br><span class="line">    <span class="keyword">if</span> (array === <span class="literal">undefined</span>) &#123;</span><br><span class="line">      array = []</span><br><span class="line">    &#125;</span><br><span class="line">    array.<span class="title function_">forEach</span>(<span class="function"><span class="params">fn</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="title function_">fn</span>()</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行 <code>ts-node test/index.ts</code>，如果控制台输出 <code>called:true</code> 那么就测试通过</p>
+<h3 id="3-优化代码"><a href="#3-优化代码" class="headerlink" title="3. 优化代码"></a>3. 优化代码</h3><figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">export class EventHub &#123;</span><br><span class="line">  cache = &#123;&#125;</span><br><span class="line">  on(eventName, fn) &#123;</span><br><span class="line"><span class="deletion">-   if (this.cache[eventName] === undefined) &#123;</span></span><br><span class="line"><span class="deletion">-     this.cache[eventName] = []</span></span><br><span class="line"><span class="deletion">-   &#125;</span></span><br><span class="line"><span class="addition">+   this.cache[eventName] = this.cache[eventName] || []</span></span><br><span class="line"><span class="deletion">-   const array = this.cache[eventName]</span></span><br><span class="line"><span class="deletion">-   array.push(fn)</span></span><br><span class="line"><span class="addition">+   this.cache[eventName].push</span></span><br><span class="line">  &#125;</span><br><span class="line">  emit(eventName) &#123;</span><br><span class="line"><span class="deletion">-   let array = this.cache[eventName]</span></span><br><span class="line"><span class="deletion">-   if (array === undefined) &#123;</span></span><br><span class="line"><span class="deletion">-     array = []</span></span><br><span class="line"><span class="deletion">-   &#125;</span></span><br><span class="line"><span class="deletion">-   let array = this.cache[eventName] || []</span></span><br><span class="line"><span class="deletion">-   array.forEach(fn =&gt; &#123;</span></span><br><span class="line"><span class="deletion">-     fn()</span></span><br><span class="line"><span class="deletion">-   &#125;)</span></span><br><span class="line"><span class="addition">+   (this.cache[eventName] || []).forEach(fn =&gt; fn())</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行 <code>ts-node test/index.ts</code>，如果不报任何错误，则测试通过</p>
+<h3 id="4-实现-emit-的第二个参数"><a href="#4-实现-emit-的第二个参数" class="headerlink" title="4. 实现 emit 的第二个参数"></a>4. 实现 <code>emit</code> 的第二个参数</h3><h4 id="添加测试用例"><a href="#添加测试用例" class="headerlink" title="添加测试用例"></a>添加测试用例</h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// test/index.ts</span></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">EventHub</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;../src/index&#x27;</span></span><br><span class="line"><span class="keyword">const</span> eventhub = <span class="keyword">new</span> <span class="title class_">EventHub</span>()</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> called = <span class="literal">false</span></span><br><span class="line">eventhub.<span class="title function_">on</span>(<span class="string">&#x27;xxx&#x27;</span>, <span class="function"><span class="params">data</span> =&gt;</span> &#123;</span><br><span class="line">  called = <span class="literal">true</span></span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;called:&#x27;</span> + called)</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">assert</span>(data === <span class="string">&#x27;接受的数据&#x27;</span>) <span class="comment">// 断言 data 和函数接受的数据相等</span></span><br><span class="line">&#125;)</span><br><span class="line">eventhub.<span class="title function_">emit</span>(<span class="string">&#x27;xxx&#x27;</span>, <span class="string">&#x27;接受的数据&#x27;</span>) <span class="comment">// 第二个参数接受数据</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="实现功能"><a href="#实现功能" class="headerlink" title="实现功能"></a>实现功能</h4><p>很简单，把 <code>接受的数据</code> 传给每一个函数即可</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// src/index.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">EventHub</span> &#123;</span><br><span class="line">  cache = &#123;&#125;</span><br><span class="line">  <span class="title function_">on</span>(<span class="params">eventName, fn</span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">cache</span>[eventName] = <span class="variable language_">this</span>.<span class="property">cache</span>[eventName] || []</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">cache</span>[eventName].<span class="property">push</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">emit</span>(<span class="params">eventName, data?</span>) &#123;</span><br><span class="line">    <span class="comment">// 把接收的数据传给每一个函数就可以了</span></span><br><span class="line">    (<span class="variable language_">this</span>.<span class="property">cache</span>[eventName] || []).<span class="title function_">forEach</span>(<span class="function"><span class="params">fn</span> =&gt;</span> <span class="title function_">fn</span>(data))</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行 <code>ts-node test/index.ts</code>，如果不报任何错误，则测试通过</p>
+<h3 id="5-实现-off"><a href="#5-实现-off" class="headerlink" title="5. 实现 off"></a>5. 实现 <code>off</code></h3><h4 id="测试用例"><a href="#测试用例" class="headerlink" title="测试用例"></a>测试用例</h4><p>想象在淘宝买东西：我下单后，在发货前，马上取消订单，这样子货就不会送到家里</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// test/index.ts</span></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">EventHub</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;../src/index&#x27;</span></span><br><span class="line"><span class="keyword">const</span> eventhub = <span class="keyword">new</span> <span class="title class_">EventHub</span>()</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> called = <span class="literal">false</span></span><br><span class="line">eventhub.<span class="title function_">on</span>(<span class="string">&#x27;xxx&#x27;</span>, <span class="function"><span class="params">data</span> =&gt;</span> &#123;</span><br><span class="line">  called = <span class="literal">true</span></span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;called:&#x27;</span> + called)</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">assert</span>(data === <span class="string">&#x27;接受的数据&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line">eventhub.<span class="title function_">emit</span>(<span class="string">&#x27;xxx&#x27;</span>, <span class="string">&#x27;接受的数据&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> eventHub2 = <span class="keyword">new</span> <span class="title class_">EventHub</span>()</span><br><span class="line"><span class="keyword">let</span> called2 = <span class="literal">false</span></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">fn1</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">  called2 = <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line">eventHub.<span class="title function_">on</span>(<span class="string">&#x27;yyy&#x27;</span>, fn1)</span><br><span class="line">eventHub.<span class="title function_">off</span>(<span class="string">&#x27;yyy&#x27;</span>, fn1) <span class="comment">// 顺序非常重要，要在订阅之后(发布之前)马上取消</span></span><br><span class="line">eventHub.<span class="title function_">emit</span>(<span class="string">&#x27;yyy&#x27;</span>)</span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(called2) <span class="comment">// 如果值为 false，则测试通过</span></span><br><span class="line">&#125;, <span class="number">1000</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="实现功能-1"><a href="#实现功能-1" class="headerlink" title="实现功能"></a>实现功能</h4><p>把 <code>map</code> 里相对应的函数删掉</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// src/index.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">EventHub</span> &#123;</span><br><span class="line">  cache = &#123;&#125;</span><br><span class="line">  <span class="title function_">on</span>(<span class="params">eventName, fn</span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">cache</span>[eventName] = <span class="variable language_">this</span>.<span class="property">cache</span>[eventName] || []</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">cache</span>[eventName].<span class="property">push</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">emit</span>(<span class="params">eventName, data?</span>) &#123;</span><br><span class="line">    ;(<span class="variable language_">this</span>.<span class="property">cache</span>[eventName] || []).<span class="title function_">forEach</span>(<span class="function"><span class="params">fn</span> =&gt;</span> <span class="title function_">fn</span>(data))</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">off</span>(<span class="params">eventName, fn</span>) &#123;</span><br><span class="line">    <span class="comment">// 把 fn 从 this.cache[eventName] 里删掉</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">cache</span>[eventName] = <span class="variable language_">this</span>.<span class="property">cache</span>[eventName] || []</span><br><span class="line">    <span class="keyword">let</span> index = <span class="literal">undefined</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="variable language_">this</span>.<span class="property">cache</span>[eventName].<span class="property">length</span>; i++) &#123;</span><br><span class="line">      <span class="keyword">if</span> (<span class="variable language_">this</span>.<span class="property">cache</span>[eventName][i] === fn) &#123;</span><br><span class="line">        index = i</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ((index = <span class="literal">undefined</span>)) &#123;</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">cache</span>[eventName].<span class="title function_">splice</span>(index, <span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行 <code>ts-node test/index.ts</code>，输出 <code>false</code> 则测试成功</p>
+<h3 id="6-优化代码"><a href="#6-优化代码" class="headerlink" title="6. 优化代码"></a>6. 优化代码</h3><figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">export class EventHub &#123;</span><br><span class="line">  cache = &#123;&#125;</span><br><span class="line">  on(eventName, fn) &#123;</span><br><span class="line">    this.cache[eventName] = this.cache[eventName] || []</span><br><span class="line">    this.cache[eventName].push</span><br><span class="line">  &#125;</span><br><span class="line">  emit(eventName, data?) &#123;</span><br><span class="line">    (this.cache[eventName] || []).forEach(fn =&gt; fn(data))</span><br><span class="line">  &#125;</span><br><span class="line">  off(eventName, fn) &#123;</span><br><span class="line"><span class="deletion">-   this.cache[eventName] = this.cache[eventName] || []</span></span><br><span class="line"><span class="deletion">-   let index = undefined</span></span><br><span class="line"><span class="deletion">-   for(let i = 0; i &lt; this.cache[eventName].length; i++) &#123;</span></span><br><span class="line"><span class="deletion">-     if(this.cache[eventName][i] === fn) &#123;</span></span><br><span class="line"><span class="deletion">-       index = i</span></span><br><span class="line"><span class="deletion">-       break</span></span><br><span class="line"><span class="deletion">-     &#125;</span></span><br><span class="line"><span class="deletion">-   &#125;</span></span><br><span class="line"><span class="addition">+   let index = indexOf(this.cache[eventName], fn)</span></span><br><span class="line"><span class="deletion">-   if(index = undefined) &#123;</span></span><br><span class="line"><span class="deletion">-     return</span></span><br><span class="line"><span class="deletion">-   &#125; else &#123;</span></span><br><span class="line"><span class="deletion">-     this.cache[eventName].splice(index, 1)</span></span><br><span class="line"><span class="deletion">-   &#125;</span></span><br><span class="line"><span class="addition">+   if(index = -1) return</span></span><br><span class="line"><span class="addition">+   this.cache[eventName].splice(index, 1)</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="addition">+function indexOf(array, item) &#123;</span></span><br><span class="line"><span class="addition">+ if (array === undefined) return -1</span></span><br><span class="line"><span class="addition">+ let index = -1</span></span><br><span class="line"><span class="addition">+ for (let i = 0; i &lt; array.length; i++) &#123;</span></span><br><span class="line"><span class="addition">+   if (array[i] === item) &#123;</span></span><br><span class="line"><span class="addition">+     index = i</span></span><br><span class="line"><span class="addition">+   &#125;</span></span><br><span class="line"><span class="addition">+ &#125;</span></span><br><span class="line"><span class="addition">+ return index</span></span><br><span class="line"><span class="addition">+&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="五、重构代码"><a href="#五、重构代码" class="headerlink" title="五、重构代码"></a>五、重构代码</h2><blockquote>
+<p>重构！优化！</p>
+</blockquote>
+<h3 id="1-重构优化测试代码"><a href="#1-重构优化测试代码" class="headerlink" title="1. 重构优化测试代码"></a>1. 重构优化测试代码</h3><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">EventHub</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;../src/index&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">TestCase</span> = <span class="function">(<span class="params">message: <span class="built_in">string</span></span>) =&gt;</span> <span class="built_in">void</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="attr">test1</span>: <span class="title class_">TestCase</span> = <span class="function"><span class="params">message</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> eventHub = <span class="keyword">new</span> <span class="title class_">EventHub</span>()</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">assert</span>(eventHub <span class="keyword">instanceof</span> <span class="title class_">Object</span> === <span class="literal">true</span>, <span class="string">&#x27;eventHub 是一个对象&#x27;</span>)</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(message)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="attr">test2</span>: <span class="title class_">TestCase</span> = <span class="function"><span class="params">message</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// on emit</span></span><br><span class="line">  <span class="keyword">const</span> eventHub = <span class="keyword">new</span> <span class="title class_">EventHub</span>()</span><br><span class="line">  <span class="keyword">let</span> called = <span class="literal">false</span></span><br><span class="line">  eventHub.<span class="title function_">on</span>(<span class="string">&#x27;xxx&#x27;</span>, <span class="function"><span class="params">data</span> =&gt;</span> &#123;</span><br><span class="line">    called = <span class="literal">true</span></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">assert</span>(data[<span class="number">0</span>] === <span class="string">&#x27;接受的数据1&#x27;</span>)</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">assert</span>(data[<span class="number">1</span>] === <span class="string">&#x27;接受的数据2&#x27;</span>)</span><br><span class="line">  &#125;)</span><br><span class="line">  eventHub.<span class="title function_">emit</span>(<span class="string">&#x27;xxx&#x27;</span>, [<span class="string">&#x27;接受的数据1&#x27;</span>, <span class="string">&#x27;接受的数据2&#x27;</span>])</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">assert</span>(called)</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(message)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="attr">test3</span>: <span class="title class_">TestCase</span> = <span class="function"><span class="params">message</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> eventHub = <span class="keyword">new</span> <span class="title class_">EventHub</span>()</span><br><span class="line">  <span class="keyword">let</span> called = <span class="literal">false</span></span><br><span class="line">  <span class="keyword">const</span> <span class="title function_">fn1</span> = (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">    called = <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  eventHub.<span class="title function_">on</span>(<span class="string">&#x27;yyy&#x27;</span>, fn1)</span><br><span class="line">  eventHub.<span class="title function_">off</span>(<span class="string">&#x27;yyy&#x27;</span>, fn1)</span><br><span class="line">  eventHub.<span class="title function_">emit</span>(<span class="string">&#x27;yyy&#x27;</span>)</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">assert</span>(called === <span class="literal">false</span>)</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(message)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">test1</span>(<span class="string">&#x27;EventHub 可以创建对象&#x27;</span>)</span><br><span class="line"><span class="title function_">test2</span>(<span class="string">&#x27;.on 之后 .emit 会触发 .on 的函数&#x27;</span>)</span><br><span class="line"><span class="title function_">test3</span>(<span class="string">&#x27;.off 是有用的&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-重构优化-EventHub"><a href="#2-重构优化-EventHub" class="headerlink" title="2. 重构优化 EventHub"></a>2. 重构优化 <code>EventHub</code></h3><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">EventHub</span> &#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="attr">cache</span>: &#123; [<span class="attr">key</span>: <span class="built_in">string</span>]: <span class="title class_">Array</span>&lt;<span class="function">(<span class="params">data: <span class="built_in">unknown</span></span>) =&gt;</span> <span class="built_in">void</span>&gt; &#125; = &#123;&#125;</span><br><span class="line">  <span class="title function_">on</span>(<span class="params">eventName: <span class="built_in">string</span>, fn: (data: <span class="built_in">any</span>) =&gt; <span class="built_in">void</span></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">cache</span>[eventName] = <span class="variable language_">this</span>.<span class="property">cache</span>[eventName] || []</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">cache</span>[eventName].<span class="title function_">push</span>(fn)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">emit</span>(<span class="params">eventName: <span class="built_in">string</span>, data?: <span class="built_in">unknown</span></span>) &#123;</span><br><span class="line">    (<span class="variable language_">this</span>.<span class="property">cache</span>[eventName] || []).<span class="title function_">forEach</span>(<span class="function"><span class="params">fn</span> =&gt;</span> <span class="title function_">fn</span>(data))</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">off</span>(<span class="params">eventName: <span class="built_in">string</span>, fn: (data: <span class="built_in">unknown</span>) =&gt; <span class="built_in">void</span></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> index = <span class="title function_">indexOf</span>(<span class="variable language_">this</span>.<span class="property">cache</span>[eventName], fn)</span><br><span class="line">    <span class="keyword">if</span> (index === -<span class="number">1</span>) <span class="keyword">return</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">cache</span>[eventName].<span class="title function_">splice</span>(index, <span class="number">1</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 帮助函数 indexOf</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">indexOf</span>(<span class="params">array, item</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (array === <span class="literal">undefined</span>) <span class="keyword">return</span> -<span class="number">1</span></span><br><span class="line">  <span class="keyword">let</span> index = -<span class="number">1</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; array.<span class="property">length</span>; i++) &#123;</span><br><span class="line">    <span class="keyword">if</span> (array[i] === item) &#123;</span><br><span class="line">      index = i</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> index</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>感谢阅读，下次见 :)</p>
+</div>
+   
+  <a id="older" class="blog-nav" href="/2022/12/17/mini-redux/">OLDER&nbsp;&gt;</a>
+   
+  <a id="newer" class="blog-nav" href="/2023/02/09/javascript-the-good-parts/">&lt;&nbsp;NEWER</a>
+   
+  <br />
+  <a href="/archives">cd ../</a>
+</div>
+
+        <div class="footer">
+  
+  <div class="footer-more">
+      
+  </div>
+  
+  <div class="footer-more">
+      
+  </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+
+
+    </div>
+  </body>
+</html>
