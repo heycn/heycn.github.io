@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="陈楠的博客" />
+  <meta name="author" content="陈楠" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      小白也能看懂的「事件循环」 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="head">
+        <div class="avatar">
+  <a href="/">
+    <img src="/images/avatar.png" alt="" />
+  </a>
+</div>
+
+        <p class="links">
+  
+    <a title="Blog" target="" href="/archives">
+      <i class="iconfont icon-emoji-friendly"></i>
+      Blog
+    </a>
+  
+    <a title="Docs" target="_blank" href="/">
+      <i class="iconfont icon-tags"></i>
+      Docs
+    </a>
+  
+    <a title="GitHub" target="_blank" href="https://github.com/heycn">
+      <i class="iconfont icon-github"></i>
+      GitHub
+    </a>
+  
+    <a title="WeChat" target="_blank" href="/images/wechat.jpg">
+      <i class="iconfont icon-wechat"></i>
+      WeChat
+    </a>
+  
+    <a title="Twitter" target="_blank" href="https://twitter.com/heycn_112">
+      <i class="iconfont icon-twitter"></i>
+      Twitter
+    </a>
+  
+    <a title="Email" target="" href="mailto:heycn@foxmail.com">
+      <i class="iconfont icon-envelope"></i>
+      Email
+    </a>
+  
+</p>
+
+      </div>
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [
+        ['$', '$'],
+        ['\\(', '\\)']
+      ]
+    }
+  }
+</script>
+
+<div class="post">
+  <h1 class="post-title">小白也能看懂的「事件循环」</h1>
+  <h3 class="date">May 06, 2023</h3>
+  <div class="content markdown-body"><blockquote>
+<p>从进程模型到事件循环 浏览器背后的异步魔法</p>
+</blockquote>
+<h2 id="一、浏览器的进程模型"><a href="#一、浏览器的进程模型" class="headerlink" title="一、浏览器的进程模型"></a>一、浏览器的进程模型</h2><h3 id="1-什么是进程？"><a href="#1-什么是进程？" class="headerlink" title="1. 什么是进程？"></a>1. 什么是进程？</h3><ul>
+<li>程序的运行需要有自己的 <code>内存空间</code>，每个程序至少有一个 <code>内存空间</code>，它们的内存互不交叉，相互隔离</li>
+<li>它们之间可以相互通信，但是需要双方同意</li>
+</ul>
+<p>这里，可以把 <code>进程</code> 简单地理解为是这块 <code>内存空间</code></p>
+<h3 id="2-什么是线程？"><a href="#2-什么是线程？" class="headerlink" title="2. 什么是线程？"></a>2. 什么是线程？</h3><p>有了 <code>进程</code> 之后，就可以运行程序的代码了，但是谁来运行代码呢？<br>那就是 —— 线程</p>
+<p>一个 <code>线程</code> 至少有一个线程， 在 <code>进程</code> 开启后会自动创建一个 <code>线程</code> 来运行代码，这个线程称为 <code>「主线程」</code>（如果主线程结束了，那么整个程序也就结束了）</p>
+<p>如果程序需要同时做很多事，比如：网络通信，音频播放，等等…<br>主线程就会启动更多的线程来执行代码，所以一个进程中可以包含多个线程（这些线程称为 <code>「子线程」</code>）</p>
+<h3 id="3-浏览器有哪些进程和线程？"><a href="#3-浏览器有哪些进程和线程？" class="headerlink" title="3. 浏览器有哪些进程和线程？"></a>3. 浏览器有哪些进程和线程？</h3><blockquote>
+<p>浏览器是一个 <code>多进程</code>、<code>多线程</code> 的应用程序</p>
+</blockquote>
+<p>浏览器内部的工作极其复杂，它的复杂度已经接近于操作系统了</p>
+<p>为了避免相互影响，为了减少连环崩溃的几率(<code>进程a</code> 崩溃了，不会影响到其他的 <code>进程b、c、d</code>)，当启动浏览器后，它就会自动启动多个 <code>进程</code></p>
+<p>这些进程我们需要关心的主要有 3 个：</p>
+<ol>
+<li>浏览器进程</li>
+<li>网络进程</li>
+<li>渲染进程(一个标签页为一个渲染进程)</li>
+</ol>
+<h4 id="3-1-浏览器进程"><a href="#3-1-浏览器进程" class="headerlink" title="3.1 浏览器进程"></a>3.1 浏览器进程</h4><p>主要负责:</p>
+<ul>
+<li>启动多个线程处理不同的任务</li>
+<li>界面显示，注意！不是页面的显示，而是浏览器界面的显示，如：刷新按钮、前进后退、书签栏，等等…</li>
+<li>用户交互：滚动、鼠标事件、键盘事件，等等…</li>
+<li>子进程管理：其他进程是由浏览器进程启动的，如：网络进程，渲染进程，等等…</li>
+<li>等等…</li>
+</ul>
+<h4 id="3-2-网络进程"><a href="#3-2-网络进程" class="headerlink" title="3.2 网络进程"></a>3.2 网络进程</h4><ul>
+<li>负责加载网络资源</li>
+<li>网络进程内部会启动多个线程来处理不同的网络任务</li>
+</ul>
+<h4 id="3-3-渲染进程（重点）"><a href="#3-3-渲染进程（重点）" class="headerlink" title="3.3 渲染进程（重点）"></a>3.3 渲染进程（重点）</h4><ul>
+<li>渲染进程启动后，会开启一个 <code>渲染主线程</code></li>
+<li><code>渲染主线程</code> 负责执行 <code>HTML</code>、<code>CSS</code>、<code>JS</code></li>
+<li>默认情况下，每一个标签页会开辟一个新的 <code>渲染进程</code>，以保证不同的标签页之间互不影响（这个模式将来可能会改变）</li>
+</ul>
+<h2 id="二、渲染主线程是如何工作的？"><a href="#二、渲染主线程是如何工作的？" class="headerlink" title="二、渲染主线程是如何工作的？"></a>二、渲染主线程是如何工作的？</h2><h3 id="1-主要工作"><a href="#1-主要工作" class="headerlink" title="1. 主要工作"></a>1. 主要工作</h3><blockquote>
+<p>渲染主线程是浏览器最繁忙的线程，需要它处理的任务包括但不限于以下：</p>
+</blockquote>
+<ul>
+<li>解析 <code>HTML</code></li>
+<li>解析 <code>CSS</code></li>
+<li>计算样式</li>
+<li>布局</li>
+<li>图层处理</li>
+<li>每秒把页面画 60 次（脑补游戏的 FPS）</li>
+<li>执行全局 JS 代码</li>
+<li>执行事件处理函数</li>
+<li>执行计时器的回调函数</li>
+<li>等等……</li>
+</ul>
+<p>我们是「996」，渲染进程就是「没有工资的007」</p>
+<h3 id="2-主线程如何调度任务？"><a href="#2-主线程如何调度任务？" class="headerlink" title="2. 主线程如何调度任务？"></a>2. 主线程如何调度任务？</h3><blockquote>
+<p>这是一个大问题</p>
+</blockquote>
+<p>比如：</p>
+<ul>
+<li>一个 JS 函数执行到一半时，用户点击了一个按钮，这时候，应该立即去执行点击事件的处理函数吗？</li>
+<li>一个 JS 函数执行到一半时，某个计时器到时间了，这时候，应该立即去执行计时器的回调函数吗？</li>
+<li>用户点击了一个按钮的同时，某个计时器到时间了，这时候，应该先执行哪个任务？</li>
+<li>等等…</li>
+</ul>
+<p>解决这个问题的方法就是 —— 排队</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cc7e3e7b42184b6dabebedbee58b0edc~tplv-k3u1fbpfcp-watermark.image" alt="排队"></p>
+<ul>
+<li>在最开始的时候，渲染主进程会进入一个无限循环（浏览器源码 <code>base/message_loop/message_pump_default.cc</code> 中，渲染主线程的启动函数中写了 <code>for (;;) &#123; ...some code &#125;</code>）</li>
+<li>每一次循环会检查消息队列中是否有任务存在。如果有，就取出第一个任务执行，执行完一个后，进入下一次循环，如果没有，则进入休眠状态</li>
+<li>其他所有线程（包括其他进程的线程）可以随时向消息队列添加任务。新任务会加到消息队列的末尾。在添加新任务时，如果主线程是休眠状态，则会将其唤醒，继续循环拿任务</li>
+</ul>
+<p>这整个过程，就叫作 —— 事件循环（消息循环）</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/chromium/chromium/blob/main/base/message_loop/message_pump_default.cc#L32">事件循环源码链接</a></p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b378553a5ff6434085bf5767139645ab~tplv-k3u1fbpfcp-watermark.image" alt="事件循环"></p>
+<h2 id="三、什么是异步"><a href="#三、什么是异步" class="headerlink" title="三、什么是异步"></a>三、什么是异步</h2><p>在代码的执行过程中，会遇到一些无法立即处理的任务，比如：</p>
+<ul>
+<li>计时完成后需要执行的任务：setTimeout、setInterval</li>
+<li>网络通信完成后需要执行的任务：XMLHttpRequest、Fetch</li>
+<li>用户点击后需要执行的任务：onclick、onmouseover、onkeydown、等等…</li>
+</ul>
+<p>如果让渲染主线程等待这些任务完成，就会导致主线程长期处于「阻塞」状态，导致浏览器「卡死」</p>
+<p>以下为「同步」示例图</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/12b93cf98c344618adcf47ca9e44d618~tplv-k3u1fbpfcp-watermark.image" alt="异步"><br>渲染主线程承担着极其重要的工作，无论如何都不能阻塞！<br>因此，浏览器选择异步来解决这个问题</p>
+<p>以下为「异步」示例图</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ca541cd5ee0540f6affcd55ce067efe5~tplv-k3u1fbpfcp-watermark.image" alt="异步"></p>
+<p>使用异步的方式，渲染主线程永不阻塞</p>
+<p>总结：</p>
+<ul>
+<li>JS 是一门单线程语言，因为它运行在浏览器的 <code>渲染主线程</code> 中，而渲染主线程只有一个</li>
+<li>但是渲染主线程承担很多工作，比如：渲染页面、执行 JS 代码等等</li>
+<li>如果使用 <code>同步</code> 的方式，就极其很有可能导致主线程产生 <code>阻塞</code>，从而导致 <code>消息队列</code> 中的很多其他任务无法执行</li>
+<li>这样会导致主线程消耗时间，导致页面无法及时更新，给页面造成 <code>卡死</code> 现象</li>
+<li>所以浏览器采用以下 <code>异步</code> 的方式来避免：</li>
+<li>当某些任务发生时，比如：计时器、网络请求、事件监听，主线程将任务交给其他线程去处理，自身立即结束任务的执行，继续执行后续代码</li>
+<li>当其他线程完成时，将之前传递的 <code>回调函数</code>「包装成任务」，加入到消息队列的末尾排队，等待主线程 <code>调度执行</code></li>
+<li>在这种异步的模式下，浏览器将会永不阻塞，从而最大限度的保证了单线程的流畅运行</li>
+</ul>
+<h2 id="四、任务有优先级吗？"><a href="#四、任务有优先级吗？" class="headerlink" title="四、任务有优先级吗？"></a>四、任务有优先级吗？</h2><p>任务是没有优先级的，在消息队列中 <code>先进先出</code></p>
+<p>但是 <code>消息队列</code> 有「优先级」</p>
+<p>过去的解释是：任务有两个队列：一个宏任务，一个微任务</p>
+<p>现在根据 W3C 的最新解释 - <a target="_blank" rel="noopener" href="https://html.spec.whatwg.org/multipage/webappapis.html#perform-a-microtask-checkpoint">原文链接</a>：</p>
+<ul>
+<li>每个任务都有一个 <code>任务类型</code>，同一个类型的任务必须在一个队列，不同类型的任务可以分属于不同的队列。在一次事件循环中，浏览器可以根据实际情况从不同的队列中取出任务执行</li>
+<li>浏览器必须准备好一个微队列，微队列中的任务优先所有其他任务执行</li>
+</ul>
+<blockquote>
+<p>随着浏览器的复杂度急剧提升，W3C 不在使用宏队列的说法</p>
+</blockquote>
+<p>在目前 Chrome 的实现中，至少包含了以下队列：</p>
+<ul>
+<li>延时队列 - 优先级中：存放计时器到达后产生的回调任务</li>
+<li>交互队列 - 优先级高：存放用户操作后产生的事件处理任务</li>
+<li>微队列 - 优先级最高：存放需要最快执行的任务（如：Promise、MutationObserver）</li>
+</ul>
+<h2 id="五、总结"><a href="#五、总结" class="headerlink" title="五、总结"></a>五、总结</h2><p>总结事件循环：</p>
+<ul>
+<li>事件循环又叫作消息循环（官方的描述是 <code>event loop</code>，浏览器的代码实现是 <code>message_loop</code>），是浏览器渲染主线程的工作方式</li>
+<li>在 Chrome 的源码中，它会开启一个不会结束的 for 循环（<code>for (;;) &#123;&#125;</code>），每次循环会从消息队列中取出第一个任务执行，而其他线程会在合适的时候把任务加入到队列末尾</li>
+<li>过去把消息队列分为 <code>宏队列</code> 和 <code>微队列</code>，但是这种说法已经无法满足现在复杂的浏览器环境，取而代之的是一种更加灵活多变的处理方式</li>
+<li>根据 W3C 官方解释：<ul>
+<li>每个任务有不同的类型，同类型任务必须在同一个队列，不同的任务可以属于不同的队列</li>
+<li>不同任务队列有不同的优先级，在一次事件循环中，由浏览器自行决定取哪一个队列的任务</li>
+<li>但浏览器必须有一个微队列，微队列的任务一定具有最高的优先级，必须优先调度执行</li>
+</ul>
+</li>
+</ul>
+<p>事件循环是异步的实现方式，而单线程是异步产生的</p>
+<p>完。</p>
+<p>感谢阅读，下次见 :)</p>
+</div>
+   
+  <a id="older" class="blog-nav" href="/2023/03/13/simplify-javascript-code/">OLDER&nbsp;&gt;</a>
+    
+  <br />
+  <a href="/archives">cd ../</a>
+</div>
+
+        <div class="footer">
+  
+  <div class="footer-more">
+      
+  </div>
+  
+  <div class="footer-more">
+      
+  </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+
+
+    </div>
+  </body>
+</html>
