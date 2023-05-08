@@ -128,7 +128,7 @@
 </ul>
 <p>这里，可以把 <code>进程</code> 简单地理解为是这块 <code>内存空间</code></p>
 <h3 id="2-什么是线程？"><a href="#2-什么是线程？" class="headerlink" title="2. 什么是线程？"></a>2. 什么是线程？</h3><p>有了 <code>进程</code> 之后，就可以运行程序的代码了，但是谁来运行代码呢？<br>那就是 —— 线程</p>
-<p>一个 <code>线程</code> 至少有一个线程， 在 <code>进程</code> 开启后会自动创建一个 <code>线程</code> 来运行代码，这个线程称为 <code>「主线程」</code>（如果主线程结束了，那么整个程序也就结束了）</p>
+<p>一个 <code>进程</code> 至少有一个线程， 在 <code>进程</code> 开启后会自动创建一个 <code>线程</code> 来运行代码，这个线程称为 <code>「主线程」</code>（如果主线程结束了，那么整个程序也就结束了）</p>
 <p>如果程序需要同时做很多事，比如：网络通信，音频播放，等等…<br>主线程就会启动更多的线程来执行代码，所以一个进程中可以包含多个线程（这些线程称为 <code>「子线程」</code>）</p>
 <h3 id="3-浏览器有哪些进程和线程？"><a href="#3-浏览器有哪些进程和线程？" class="headerlink" title="3. 浏览器有哪些进程和线程？"></a>3. 浏览器有哪些进程和线程？</h3><blockquote>
 <p>浏览器是一个 <code>多进程</code>、<code>多线程</code> 的应用程序</p>
@@ -185,7 +185,6 @@
 <li>等等…</li>
 </ul>
 <p>解决这个问题的方法就是 —— 排队</p>
-<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cc7e3e7b42184b6dabebedbee58b0edc~tplv-k3u1fbpfcp-watermark.image" alt="排队"></p>
 <ul>
 <li>在最开始的时候，渲染主进程会进入一个无限循环（浏览器源码 <code>base/message_loop/message_pump_default.cc</code> 中，渲染主线程的启动函数中写了 <code>for (;;) &#123; ...some code &#125;</code>）</li>
 <li>每一次循环会检查消息队列中是否有任务存在。如果有，就取出第一个任务执行，执行完一个后，进入下一次循环，如果没有，则进入休眠状态</li>
@@ -202,9 +201,7 @@
 </ul>
 <p>如果让渲染主线程等待这些任务完成，就会导致主线程长期处于「阻塞」状态，导致浏览器「卡死」</p>
 <p>以下为「同步」示例图</p>
-<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/12b93cf98c344618adcf47ca9e44d618~tplv-k3u1fbpfcp-watermark.image" alt="异步"><br>渲染主线程承担着极其重要的工作，无论如何都不能阻塞！<br>因此，浏览器选择异步来解决这个问题</p>
-<p>以下为「异步」示例图</p>
-<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ca541cd5ee0540f6affcd55ce067efe5~tplv-k3u1fbpfcp-watermark.image" alt="异步"></p>
+<p>渲染主线程承担着极其重要的工作，无论如何都不能阻塞！<br>因此，浏览器选择异步来解决这个问题</p>
 <p>使用异步的方式，渲染主线程永不阻塞</p>
 <p>总结：</p>
 <ul>
@@ -246,13 +243,15 @@
 </ul>
 </li>
 </ul>
-<p>事件循环是异步的实现方式，而单线程是异步产生的</p>
+<p>事件循环是异步的实现方式，而单线程是异步产生的原因</p>
 <p>完。</p>
 <p>感谢阅读，下次见 :)</p>
 </div>
    
   <a id="older" class="blog-nav" href="/2023/03/13/simplify-javascript-code/">OLDER&nbsp;&gt;</a>
-    
+   
+  <a id="newer" class="blog-nav" href="/2023/05/08/vue-optimization/">&lt;&nbsp;NEWER</a>
+   
   <br />
   <a href="/archives">cd ../</a>
 </div>

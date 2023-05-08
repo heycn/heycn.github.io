@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="陈楠的博客" />
+  <meta name="author" content="陈楠" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      Vue 常见优化手段 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="head">
+        <div class="avatar">
+  <a href="/">
+    <img src="/images/avatar.png" alt="" />
+  </a>
+</div>
+
+        <p class="links">
+  
+    <a title="Blog" target="" href="/archives">
+      <i class="iconfont icon-emoji-friendly"></i>
+      Blog
+    </a>
+  
+    <a title="Docs" target="_blank" href="/">
+      <i class="iconfont icon-tags"></i>
+      Docs
+    </a>
+  
+    <a title="GitHub" target="_blank" href="https://github.com/heycn">
+      <i class="iconfont icon-github"></i>
+      GitHub
+    </a>
+  
+    <a title="WeChat" target="_blank" href="/images/wechat.jpg">
+      <i class="iconfont icon-wechat"></i>
+      WeChat
+    </a>
+  
+    <a title="Twitter" target="_blank" href="https://twitter.com/heycn_112">
+      <i class="iconfont icon-twitter"></i>
+      Twitter
+    </a>
+  
+    <a title="Email" target="" href="mailto:heycn@foxmail.com">
+      <i class="iconfont icon-envelope"></i>
+      Email
+    </a>
+  
+</p>
+
+      </div>
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [
+        ['$', '$'],
+        ['\\(', '\\)']
+      ]
+    }
+  }
+</script>
+
+<div class="post">
+  <h1 class="post-title">Vue 常见优化手段</h1>
+  <h3 class="date">May 08, 2023</h3>
+  <div class="content markdown-body"><blockquote>
+<p>永远不要过早优化，因为它可能会带来一些意外的代价，比如：开发周期变长、开发成本增加、代码难以阅读&#x2F;难以维护。所以，请在合适的时候，再去优化</p>
+</blockquote>
+<h2 id="使用-key"><a href="#使用-key" class="headerlink" title="使用 key"></a>使用 <code>key</code></h2><p>对于通过循环生成的列表，应该给每个列表项一个稳定且唯一的 <code>key</code>，这有利于在列表变动时，尽量地减少 <code>DOM</code> 操作，从而提升性能。</p>
+<h2 id="使用-冻结对象"><a href="#使用-冻结对象" class="headerlink" title="使用 冻结对象"></a>使用 <code>冻结对象</code></h2><p>冻结的对象不会被相应化</p>
+<p>场景&amp;场景：由于 <code>Vue</code> 的数据是响应式的，每次更新的时候，都会去遍历数据，如果数据很多&#x2F;深的时候，这会浪费一些时间。当数据不需要用到响应式特性的时候，我们可以把数据冻结起来，这样 <code>Vue</code> 这个数据就不会被遍历</p>
+<h2 id="使用-函数式组件"><a href="#使用-函数式组件" class="headerlink" title="使用 函数式组件"></a>使用 <code>函数式组件</code></h2><p>函数组件是用来纯渲染页面的，数据是不响应式的，渲染的时间会更快，并且占用的内存更少，效率更高</p>
+<p>如何使用：在 <code>Vue.component</code> 中添加 <code>functional: true</code></p>
+<h2 id="使用-计算属性"><a href="#使用-计算属性" class="headerlink" title="使用 计算属性"></a>使用 <code>计算属性</code></h2><p>如果模板中某个数据会使用多次，并且数据是需要通过计算得到的，我们就可以使用计算属性缓存它们，而且它还会跟随依赖，依赖一变化，它也会变化</p>
+<h2 id="非实时绑定的表单项不使用-v-model"><a href="#非实时绑定的表单项不使用-v-model" class="headerlink" title="非实时绑定的表单项不使用 v-model"></a>非实时绑定的表单项不使用 <code>v-model</code></h2><p>当使用 <code>v-model</code> 绑定一个表单时，当用户改变表单项的状态时，也会随之改变数据，从而导致 vue 发生 <code>重新渲染/rerender</code>，这会带来一些性能开销。</p>
+<p>我们可以通过 <code>v-model.lazy</code> 或者不使用 <code>v-model</code> 的方式解决这个问题，但要注意，这样可能会导致再某一个时间段内数据和表单的值是不一致的。</p>
+<h2 id="保持对象引用稳定"><a href="#保持对象引用稳定" class="headerlink" title="保持对象引用稳定"></a>保持对象引用稳定</h2><p>大部分情况下 vue 触发 <code>重新渲染/rerender</code> 的时机是依赖的数据发生变化</p>
+<p>如果数据没有发生变化，哪怕给数据重新赋值，vue 也不会做出任何处理</p>
+<p>下面是 vue 判断数据变化的源码</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">hasChanged</span>(<span class="params">x: <span class="built_in">unknown</span>, y: <span class="built_in">unknown</span></span>): <span class="built_in">boolean</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (x === y) &#123;</span><br><span class="line">    <span class="keyword">return</span> x === <span class="number">0</span> &amp;&amp; <span class="number">1</span> / x !== <span class="number">1</span> / (y <span class="keyword">as</span> <span class="built_in">number</span>)</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> x === x || y === y</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>因此，如果需要，只要能保证组件的依赖数据不发生变化，组件就不会重新渲染</li>
+<li>对于原始数据类型，保持值不变即可</li>
+<li>对于对象类型，保持引用不变即可</li>
+</ul>
+<p>从另一方面说，由于可以通过保持属性引用稳定来避免子组件的重新渲染，所以我们应该细分组件来尽量避免多余的渲染</p>
+<h2 id="使用-v-show-代替-v-if"><a href="#使用-v-show-代替-v-if" class="headerlink" title="使用 v-show 代替 v-if"></a>使用 <code>v-show</code> 代替 <code>v-if</code></h2><p>对于「频繁切换」显示状态的元素，使用 <code>v-show</code> 可以保证虚拟 <code>DOM 树</code> 的稳定，避免频繁的新增和删除元素，特别是对于那些「内部包含大量 DOM 元素」的节点元素，这一点非常重要</p>
+<h2 id="使用-defer（延迟装载）"><a href="#使用-defer（延迟装载）" class="headerlink" title="使用 defer（延迟装载）"></a>使用 <code>defer</code>（延迟装载）</h2><blockquote>
+<p>延迟装载是一种思路，本质上是利用 <code>requestAnimationFrame</code> 分批渲染内容，它的具体实现多种多样</p>
+</blockquote>
+<ul>
+<li>JS 传输完成后，浏览器开始执行 JS 构造页面</li>
+<li>当可能一开始要渲染的组件太多，不仅 JS 执行时间很长，而且执行完后浏览器要渲染的元素过多，从而导致页面白屏</li>
+<li>一个可行的办法就是「延迟装载组件」，让组件按照指定的先后顺序一次一个一个渲染出来</li>
+</ul>
+<p>感谢阅读，下次见 :)</p>
+</div>
+   
+  <a id="older" class="blog-nav" href="/2023/05/06/js-eventLoop/">OLDER&nbsp;&gt;</a>
+    
+  <br />
+  <a href="/archives">cd ../</a>
+</div>
+
+        <div class="footer">
+  
+  <div class="footer-more">
+      
+  </div>
+  
+  <div class="footer-more">
+      
+  </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+
+
+    </div>
+  </body>
+</html>
