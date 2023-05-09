@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="陈楠的博客" />
+  <meta name="author" content="陈楠" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      JavaScript 的好与坏 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="head">
+        <div class="avatar">
+  <a href="/">
+    <img src="/images/avatar.png" alt="" />
+  </a>
+</div>
+
+        <p class="links">
+  
+    <a title="Blog" target="" href="/archives">
+      <i class="iconfont icon-emoji-friendly"></i>
+      Blog
+    </a>
+  
+    <a title="Docs" target="_blank" href="/">
+      <i class="iconfont icon-tags"></i>
+      Docs
+    </a>
+  
+    <a title="GitHub" target="_blank" href="https://github.com/heycn">
+      <i class="iconfont icon-github"></i>
+      GitHub
+    </a>
+  
+    <a title="WeChat" target="_blank" href="/images/wechat.jpg">
+      <i class="iconfont icon-wechat"></i>
+      WeChat
+    </a>
+  
+    <a title="Twitter" target="_blank" href="https://twitter.com/heycn_112">
+      <i class="iconfont icon-twitter"></i>
+      Twitter
+    </a>
+  
+    <a title="Email" target="" href="mailto:heycn@foxmail.com">
+      <i class="iconfont icon-envelope"></i>
+      Email
+    </a>
+  
+</p>
+
+      </div>
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [
+        ['$', '$'],
+        ['\\(', '\\)']
+      ]
+    }
+  }
+</script>
+
+<div class="post">
+  <h1 class="post-title">JavaScript 的好与坏</h1>
+  <h3 class="date">May 09, 2023</h3>
+  <div class="content markdown-body"><h2 id="道格拉斯的观点"><a href="#道格拉斯的观点" class="headerlink" title="道格拉斯的观点"></a>道格拉斯的观点</h2><blockquote>
+<p>JSON 发明者，《JavaScript 语言精粹》作者</p>
+</blockquote>
+<h3 id="观点1"><a href="#观点1" class="headerlink" title="观点1"></a>观点1</h3><p><code>If a feature is sometimes useful and sometimes dangerous and if there is a better option then always use the better option.</code></p>
+<p>如果一个特性有时好用有时危险，还有一个更好的选项，那么我们总是应该使用哪个更好的。</p>
+<h3 id="观点2"><a href="#观点2" class="headerlink" title="观点2"></a>观点2</h3><p><code>We are not paid to use every feature of a language. We are paid to write programs that works well and are free of error.</code></p>
+<p>公司雇我们不是为了让我们使用语言的每个特性，而是让我们写出可以用的代码，并且避免错误。</p>
+<p>根据以上两个观点，得到结论：我们是不是有可能，只用 JS 好用的部分呢？如果我们坚持使用 JS 好用的部分，我们就可以避免 JS 本身带来的 Bug</p>
+<h2 id="保守派之反驳"><a href="#保守派之反驳" class="headerlink" title="保守派之反驳"></a>保守派之反驳</h2><p>这个时候，就会有人这么说：</p>
+<ul>
+<li>为什么 JS 要把那些特性给我们呢？那就是因为觉得我们需要 JS 有这些特性才要给我们的，或者有这么一句话 —— 存在即合理</li>
+<li>JS 有这些特性，肯定是有他一定得理由，那我们为什么要反对去用它呢？</li>
+</ul>
+<p>那不得不说说程序员的共识:</p>
+<ul>
+<li>我们程序员是在不断进化的，我们现在学到的知识是进化了几十年后的效果</li>
+<li>就像人类一样，人类现在在上小学的时候，都知道地球是圆的（虽然严格来说并不是），但是在过去几千年里，人类都不知道地球是圆的</li>
+<li>那么程序员也是一样的，现在的程序员在刚入门的时候，就知道面向对象是好的、高级语言是好的等等，这些东西你一入门就知道，但是以前的程序员要不断地进行达成共识</li>
+</ul>
+<h2 id="程序员的共识"><a href="#程序员的共识" class="headerlink" title="程序员的共识"></a>程序员的共识</h2><p>那么怎么达成的呢？让我们回顾过去 50 年的历史</p>
+<h3 id="1960-年代"><a href="#1960-年代" class="headerlink" title="1960 年代"></a>1960 年代</h3><p>程序员花了一代人的时间去认同「高级语言是好的」（反方：机器语言效率高）</p>
+<p>高级语言就是现在用的 JavaScript、Java、C++、Python、Ruby 等…<br>但「这些语言是好的」这件事情，在曾经不被认可<br>他们认为：汇编、机器语言才是最好的，因为省内存、效率高，如果使用高级语言，光是解析这些语言，就要占用一半以上内存，剩下的内存就不够用了（因为 1960 年计算的内存 2MB 就已经算非常大了）</p>
+<p>跟随着机器的内存不断提高，并且用了这些语言之后发现很好用，所以就认同了这个观点</p>
+<h3 id="1970-年代"><a href="#1970-年代" class="headerlink" title="1970 年代"></a>1970 年代</h3><p>程序员花了一代人的时间去认同「<code>goto</code> 是不好的」</p>
+<p>因为 <code>goto</code> 会被滥用，所以程序员们达成了共识，所以在很多语言中就尽量少用 <code>goto</code>（在 JavaScript 中，是不支持 <code>goto</code> 的，虽然有个 <code>goto</code> 半成品：可以在 <code>break</code> 中使用）</p>
+<p>对应的就支持 —— 「结构化编程」</p>
+<p>一个编程语言只需要支持 3 种结构：<code>子程序</code>、<code>for 循环</code>、<code>if</code></p>
+<p>也就是：<code>顺序执行语句</code>、<code>条件语句</code> 和 <code>循环语句</code>，只要有这 3 中语句，贝尔梅尔这门编程语言就是完整的</p>
+<h3 id="1980-年代"><a href="#1980-年代" class="headerlink" title="1980 年代"></a>1980 年代</h3><blockquote>
+<p>反对以前那种松散的面条式代码</p>
+</blockquote>
+<p>程序员花了一代人的时间去认同「对象是好的」，发展 <code>面向对象</code></p>
+<p>现在 JS 默认是有对象的，但是在很早之前，在 C 语言那个时候，大家都不用对象，这个时候发明 Java 的程序员在那个时候就开始研究设计模式，开始研究面向对象（那个时候 Java 还没出生），把面向对象研究得很成熟之后，Sun 公司才推出了 Java 这门语言</p>
+<h3 id="1990-年代"><a href="#1990-年代" class="headerlink" title="1990 年代"></a>1990 年代</h3><p>程序员花了 20 年的时间去认同「<code>lambda</code> 表达式是好的」，这件事情在目前估计还没有完全认同</p>
+<p><code>lambda</code> 在 JS 中，<code>lambda</code> 表达式是匿名函数<br>「匿名函数是个好东西」 这句话如果说给 JS 程序员听，就不会有什么特别感觉，觉得挺好的<br>而说给 Java、C++ 程序员，他们就不会有跟我们一样的感觉，就会觉得 <code>类</code> 会更好呀，为什么我们要使用 <code>lambda 表达式</code> 呢？</p>
+<p>在后面版本，Java、C++、PHP、Python 都加入了 <code>lambda</code> 表达式，不使用之前过于复杂的面向对象的设计，而是用更轻量的匿名函数和闭包的形式来写我们的程序</p>
+<h2 id="那些不对的观点"><a href="#那些不对的观点" class="headerlink" title="那些不对的观点"></a>那些不对的观点</h2><h3 id="存在即合理"><a href="#存在即合理" class="headerlink" title="存在即合理"></a><del>存在即合理</del></h3><p>比如 JS 中的：<code>var</code>、<code>==</code></p>
+<h3 id="代码越短越好"><a href="#代码越短越好" class="headerlink" title="代码越短越好"></a><del>代码越短越好</del></h3><p>并不完全错误，「无歧义」优于「简洁」</p>
+<p>代码虽然写得短，但有可能不同的人有不同的理解，那这样就不好了</p>
+<p>例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="title function_">fn</span> = x =&gt; &#123;<span class="attr">name</span>: x&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果以上代码我这样调用：<code>fn(&#39;John&#39;)</code>，很多新手就会以为输出 <code>John</code>，其实是 <code>undefind</code><br>那么如何解决呢？请这么修改</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="title function_">fn</span> = x =&gt; (&#123;<span class="attr">name</span>: x&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>所以，有时候会造成歧义，但是这个歧义不是人造成的，是 JS 造成的</p>
+<h2 id="JS-代码中的特性取舍"><a href="#JS-代码中的特性取舍" class="headerlink" title="JS 代码中的特性取舍"></a>JS 代码中的特性取舍</h2><p>基本原则：能完成特定功能，并且无歧义、无副作用，这样的特性，优先使用</p>
+<h3 id="不要用的-JS-特性"><a href="#不要用的-JS-特性" class="headerlink" title="不要用的 JS 特性"></a>不要用的 JS 特性</h3><ul>
+<li><p>绝对不要用</p>
+<ul>
+<li><p>全局变量（如果有1万个全局变量？）</p>
+</li>
+<li><p>var<br>有 Bug，会变量提升；<br>有副作用，声明后会挂载到 window</p>
+</li>
+<li><p>&#x3D;&#x3D;</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[] == <span class="number">0</span>, <span class="string">&quot;0&quot;</span> == <span class="number">0</span>, [] != <span class="string">&quot;0&quot;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>包装类型 String、Boolean</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> x = <span class="keyword">new</span> <span class="title class_">String</span>(<span class="literal">false</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(x) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;hi&#x27;</span>)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;ho&#x27;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>会输出 <code>hi</code>，因为 <code>x</code> 是一个对象，JS 中所有的对象都是 <code>true</code></p>
+</li>
+</ul>
+</li>
+<li><p>有些人不用</p>
+<ul>
+<li>class、new、this</li>
+<li>比如喜欢 React Hooks 的开发者</li>
+</ul>
+</li>
+<li><p>用的人不多，尽量少用</p>
+<ul>
+<li>symbol、generator、iterator</li>
+<li>反射</li>
+</ul>
+</li>
+</ul>
+<h3 id="一定要用的-JS-特性"><a href="#一定要用的-JS-特性" class="headerlink" title="一定要用的 JS 特性"></a>一定要用的 JS 特性</h3><ul>
+<li><p><code>===</code></p>
+</li>
+<li><p><code>...</code> 运算符</p>
+</li>
+<li><p>模块 <code>import</code>、<code>export</code></p>
+</li>
+<li><p><code>let</code> <code>const</code></p>
+</li>
+<li><p>析构赋值</p>
+</li>
+<li><p><code>Promise</code>、<code>await</code></p>
+</li>
+</ul>
+<h3 id="可以使用的-JS-特性"><a href="#可以使用的-JS-特性" class="headerlink" title="可以使用的 JS 特性"></a>可以使用的 JS 特性</h3><ul>
+<li><p><code>class</code></p>
+</li>
+<li><p><code>getter</code>、<code>setter</code></p>
+</li>
+<li><p><code>WeakMap</code></p>
+</li>
+<li><p><code>Proxy</code></p>
+</li>
+</ul>
+<h3 id="存在问题但可以用"><a href="#存在问题但可以用" class="headerlink" title="存在问题但可以用"></a>存在问题但可以用</h3><ul>
+<li><p>箭头函数</p>
+</li>
+<li><p>数组 API + Polyfill</p>
+</li>
+</ul>
+<p>感谢阅读，下次见 :)</p>
+</div>
+   
+  <a id="older" class="blog-nav" href="/2023/05/08/vue-optimization/">OLDER&nbsp;&gt;</a>
+    
+  <br />
+  <a href="/archives">cd ../</a>
+</div>
+
+        <div class="footer">
+  
+  <div class="footer-more">
+      
+  </div>
+  
+  <div class="footer-more">
+      
+  </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+
+
+    </div>
+  </body>
+</html>
