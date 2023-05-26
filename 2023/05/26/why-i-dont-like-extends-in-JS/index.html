@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="陈楠的博客" />
+  <meta name="author" content="陈楠" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      为什么我讨厌 JS 中的继承？ 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="head">
+        <div class="avatar">
+  <a href="/">
+    <img src="/images/avatar.png" alt="" />
+  </a>
+</div>
+
+        <p class="links">
+  
+    <a title="Blog" target="" href="/archives">
+      <i class="iconfont icon-emoji-friendly"></i>
+      Blog
+    </a>
+  
+    <a title="Docs" target="_blank" href="/">
+      <i class="iconfont icon-tags"></i>
+      Docs
+    </a>
+  
+    <a title="GitHub" target="_blank" href="https://github.com/heycn">
+      <i class="iconfont icon-github"></i>
+      GitHub
+    </a>
+  
+    <a title="WeChat" target="_blank" href="/images/wechat.jpg">
+      <i class="iconfont icon-wechat"></i>
+      WeChat
+    </a>
+  
+    <a title="Twitter" target="_blank" href="https://twitter.com/heycn_112">
+      <i class="iconfont icon-twitter"></i>
+      Twitter
+    </a>
+  
+    <a title="Email" target="" href="mailto:heycn@foxmail.com">
+      <i class="iconfont icon-envelope"></i>
+      Email
+    </a>
+  
+</p>
+
+      </div>
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [
+        ['$', '$'],
+        ['\\(', '\\)']
+      ]
+    }
+  }
+</script>
+
+<div class="post">
+  <h1 class="post-title">为什么我讨厌 JS 中的继承？</h1>
+  <h3 class="date">May 26, 2023</h3>
+  <div class="content markdown-body"><h1 id="使用继承"><a href="#使用继承" class="headerlink" title="使用继承"></a>使用继承</h1><h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><h3 id="现在要给-Person-添加功能"><a href="#现在要给-Person-添加功能" class="headerlink" title="现在要给 Person 添加功能"></a>现在要给 Person 添加功能</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">person1.<span class="title function_">on</span>(<span class="string">&#x27;die&#x27;</span>, fn)</span><br><span class="line">person1.<span class="title function_">emit</span>(<span class="string">&#x27;die&#x27;</span>)</span><br><span class="line">person1.<span class="title function_">off</span>(<span class="string">&#x27;die&#x27;</span>, fn)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 让 Person 实例具有发布订阅功能，怎么做？</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="简单，加代码"><a href="#简单，加代码" class="headerlink" title="简单，加代码"></a>简单，加代码</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params">name</span>)&#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">name</span> = name</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">seyHi</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Hi, I&#x27;m <span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span>`</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  cache = []</span><br><span class="line">  <span class="title function_">on</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line">  <span class="title function_">off</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line">  <span class="title function_">emit</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 然后把以上代码写全</span></span><br></pre></td></tr></table></figure>
+
+<p><code>let person1 = new Person()</code>，这样 <code>person1</code> 就既是人类，又能发布订阅</p>
+<blockquote>
+<p>目前来说没有问题，因为代码没有重复</p>
+</blockquote>
+<h3 id="另一个类：报社"><a href="#另一个类：报社" class="headerlink" title="另一个类：报社"></a>另一个类：报社</h3><p>现在除了人类之外，报社也要拥有发布订阅功能</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> 报社&#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params">name</span>)&#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">name</span> = name</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">print</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line">  cache = []</span><br><span class="line">  <span class="title function_">on</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line">  <span class="title function_">off</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line">  <span class="title function_">emit</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>let 报社1 = new 报社(&#39;新华日报&#39;)</code>，这样，<code>报社1</code> 就既是报社，又能发布订阅</p>
+<blockquote>
+<p>那么问题来了，代码有重复了！</p>
+</blockquote>
+<h3 id="消除重复"><a href="#消除重复" class="headerlink" title="消除重复"></a>消除重复</h3><h4 id="Person-和报社有重复属性"><a href="#Person-和报社有重复属性" class="headerlink" title="Person 和报社有重复属性"></a>Person 和报社有重复属性</h4><ul>
+<li>把重复属性求出来，单独写个类 <code>EventEmitter</code></li>
+<li>然后让 <code>Person</code> 和 <code>报社</code> 继承 <code>EventEmitter</code></li>
+</ul>
+<h4 id="细节"><a href="#细节" class="headerlink" title="细节"></a>细节</h4><ul>
+<li><code>constructor</code> 要调用 <code>super()</code></li>
+<li>以保证 <code>EventEmitter</code> 实例被初始化</li>
+</ul>
+<h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">EventEmitter</span>&#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line">  cache = []</span><br><span class="line">  <span class="title function_">on</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line">  <span class="title function_">off</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line">  <span class="title function_">emit</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span> <span class="keyword">extends</span> <span class="title class_ inherited__">EventEmitter</span>&#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params">name</span>)&#123;</span><br><span class="line">    <span class="variable language_">super</span>()</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">name</span> = name</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">seyHi</span>(<span class="params"></span>)&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Hi, I&#x27;m <span class="subst">$&#123;<span class="variable language_">this</span>.name&#125;</span>`</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> 报社 <span class="keyword">extends</span> <span class="title class_">EventEmitter</span>&#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params">name</span>)&#123;</span><br><span class="line">    <span class="variable language_">super</span>()</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">name</span> = name</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">print</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="继承的其他功能"><a href="#继承的其他功能" class="headerlink" title="继承的其他功能"></a>继承的其他功能</h4><p>重写</p>
+<ul>
+<li>子类重写父类的所有属性，以实现多态</li>
+<li>多态的意思是不同的子类对同一个消息有不同的反应</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span> <span class="keyword">extends</span> <span class="title class_ inherited__">EventEmitter</span>&#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params">name</span>)&#123;</span><br><span class="line">    <span class="variable language_">super</span>()</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">name</span> = name</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">seyHi</span>(<span class="params">message</span>)&#123;&#125;</span><br><span class="line">  <span class="title function_">on</span>(<span class="params">eventName, fn</span>)&#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;我要监听啦&#x27;</span>) <span class="comment">// 人类的 on 会打印这句话，而报社不会，这就是多态</span></span><br><span class="line">    <span class="variable language_">super</span>.<span class="title function_">on</span>(eventName, fn)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是，继承有个问题。</p>
+<h1 id="继承有什么问题"><a href="#继承有什么问题" class="headerlink" title="继承有什么问题"></a>继承有什么问题</h1><p>如果我需要更多功能怎么办？</p>
+<p>两个选择：</p>
+<ol>
+<li><p>让 <code>EventEmitter</code> 继承其他 <code>类</code></p>
+<p>比如让 <code>发布订阅</code> 去继承 <code>跑</code>，那是不是很奇怪？</p>
+</li>
+<li><p>让 <code>Person</code> 继承两个 <code>类</code>（多继承）</p>
+<p>很遗憾这个功能在 <code>JavaScript</code> 和 <code>Java</code> 中都没有，<code>C++</code> 中有</p>
+</li>
+</ol>
+<p>所以这两个方法都走不通</p>
+<p>你可能会说: “那可以把这两个再抽象一下呀”，但是下面讲的的组合，你就会发现 <code>继承</code> 就是一个笑话！</p>
+<h1 id="使用组合"><a href="#使用组合" class="headerlink" title="使用组合"></a>使用组合</h1><blockquote>
+<p><code>类</code> 是固定写法，把语法已经写死了，而 <code>组合</code> 没有固定写法，在这里我写我认为的组合写法，可能和你想的不一样，我这里只演示一种</p>
+</blockquote>
+<h2 id="让-Person-实现发布订阅"><a href="#让-Person-实现发布订阅" class="headerlink" title="让 Person 实现发布订阅"></a>让 Person 实现发布订阅</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">  eventEmitter = <span class="keyword">new</span> <span class="title class_">EventEmitter</span>() <span class="comment">// 这句话的意思是：人类拥有发布订阅的功能</span></span><br><span class="line">  name</span><br><span class="line">  <span class="title function_">sayHi</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line">  <span class="title function_">on</span>(<span class="params">eventName, fn</span>)&#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">eventEmitter</span>.<span class="title function_">on</span>(eventName, fn)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">off</span>(<span class="params">eventName, fn</span>)&#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">eventEmitter</span>.<span class="title function_">off</span>(eventName, fn)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">emit</span>(<span class="params">eventName, data</span>)&#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">eventEmitter</span>.<span class="title function_">emit</span>(eventName, data)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>以上代码就是不使用继承，但拥有发布订阅的功能</p>
+<blockquote>
+<p>这样功能是不是实现了？只不过目前的代码有点挫，但是可以优化呀</p>
+</blockquote>
+<h2 id="优化代码"><a href="#优化代码" class="headerlink" title="优化代码"></a>优化代码</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span>&#123;</span><br><span class="line">  name</span><br><span class="line">  <span class="title function_">seyHi</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> person1 = <span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&#x27;张三&#x27;</span>)</span><br><span class="line"><span class="title function_">mixin</span>(person1, <span class="keyword">new</span> <span class="title class_">EventEmitter</span>())</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">mixin</span>(<span class="params">to, <span class="keyword">from</span></span>)&#123;</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">let</span> key <span class="keyword">in</span> <span class="keyword">from</span>)&#123;</span><br><span class="line">    to[key] = <span class="keyword">from</span>[key] <span class="comment">// 把 from 上的所有属性拷贝到 to 上</span></span><br><span class="line">  &#125; </span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 注意，这是最简化的 mixin，实际会复杂一些</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="出现-Bug"><a href="#出现-Bug" class="headerlink" title="出现 Bug"></a>出现 Bug</h2><p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cf6993e8f99a41ce9b2aa53d254903e8~tplv-k3u1fbpfcp-watermark.image" alt="not_found_fn.png"></p>
+<p>你会发现，<code>mixin</code> 之后，<code>EventEmitter</code> 里的函数却拷贝不过去，这是因为 <code>JS</code> 的 <code>class</code> 有一个毛病：他会把函数放在原型上面，就无法枚举</p>
+<p>那么我们可以这么做：</p>
+<p>改写 <code>EventEmitter</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">createEventEmitter</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> cache = []</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    <span class="title function_">on</span>(<span class="params"></span>)&#123;&#125;,</span><br><span class="line">    <span class="title function_">off</span>(<span class="params"></span>)&#123;&#125;,</span><br><span class="line">    <span class="title function_">emit</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> eventEmitter = <span class="title function_">createEventEmitter</span>()</span><br><span class="line"><span class="keyword">let</span> person1 = <span class="keyword">new</span> <span class="title class_">Person</span>()</span><br><span class="line"><span class="title function_">mixin</span>(person1, eventEmitter)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1d70d21babd14731ace26af9585dd441~tplv-k3u1fbpfcp-watermark.image" alt="使用组合.png"></p>
+<p>那就拥有了 <code>on()</code> <code>off()</code> <code>emit()</code>，当你把 <code>继承</code> 给干掉，你就会发现：这个世界扁平起来了</p>
+<p>你需要什么，比如上面那 3 个 Api，我就把这 3 个 Api 的地址放到你身上，你想要其他功能，我就再把其他功能的地址放到你身上，这样就可以不断地去添加不同的功能</p>
+<blockquote>
+<p>这就是 <code>组合</code> 的思想：你要什么东西，我就把什么东西的地址复制给你</p>
+</blockquote>
+<h2 id="如果你需要更多的功能"><a href="#如果你需要更多的功能" class="headerlink" title="如果你需要更多的功能"></a>如果你需要更多的功能</h2><blockquote>
+<p>那就变得非常简单</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">  name</span><br><span class="line">  <span class="title function_">sayHi</span>(<span class="params"></span>)&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> person1 = <span class="keyword">new</span> <span class="title class_">Person</span>(<span class="string">&#x27;张三&#x27;</span>)</span><br><span class="line"><span class="title function_">mixin</span>(person1, <span class="keyword">new</span> <span class="title class_">EventEmitter</span>())</span><br><span class="line"><span class="title function_">mixin</span>(person1, <span class="keyword">new</span> <span class="title class_">Flyer</span>()) <span class="comment">// person1 就可以飞了</span></span><br><span class="line"><span class="title function_">mixin</span>(person1, <span class="keyword">new</span> <span class="title class_">Killer</span>()) <span class="comment">// person1 就可以开枪s人</span></span><br></pre></td></tr></table></figure>
+
+<p>你看！我还需要什么继承？而且组和这 3 个功能合集之间没有关系，它们的关系是扁平的</p>
+<p>所以由此得出：有了组合，你可能不需要 class，直接使用：函数 + 闭包</p>
+<h2 id="变态需求"><a href="#变态需求" class="headerlink" title="变态需求"></a>变态需求</h2><h3 id="猫、狗、动物"><a href="#猫、狗、动物" class="headerlink" title="猫、狗、动物"></a>猫、狗、动物</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dog</span><br><span class="line">  .<span class="title function_">wangwang</span>() <span class="comment">// 狗可以汪汪叫</span></span><br><span class="line">  .<span class="title function_">poop</span>() <span class="comment">// 狗可以拉屎</span></span><br><span class="line">cat</span><br><span class="line">  .<span class="title function_">miaomiao</span>() <span class="comment">// 猫可以喵喵叫</span></span><br><span class="line">  .<span class="title function_">poop</span>() <span class="comment">// 猫可以拉屎</span></span><br></pre></td></tr></table></figure>
+
+<p>那么猫和狗都可以拉屎，那我们就可以继承它们了</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 伪代码，狗和猫除了都可以拉屎之外(继承了 poop())，还可以汪汪叫/喵喵叫</span></span><br><span class="line">animal</span><br><span class="line">  .<span class="title function_">poop</span>()</span><br><span class="line">    dog</span><br><span class="line">      .<span class="title function_">wangwang</span>()</span><br><span class="line">    cat</span><br><span class="line">      .<span class="title function_">miaomiao</span>()</span><br></pre></td></tr></table></figure>
+
+<h3 id="扫地机器人"><a href="#扫地机器人" class="headerlink" title="扫地机器人"></a>扫地机器人</h3><blockquote>
+<p>那么动物会拉屎，那么这个时候需要一个机器人来打扫卫生</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">cleaningRobot</span><br><span class="line">  .<span class="title function_">run</span>() <span class="comment">// 可以跑</span></span><br><span class="line">  .<span class="title function_">clean</span>() <span class="comment">// 可以打扫卫生</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 伪代码</span></span><br><span class="line">animal</span><br><span class="line">  .<span class="title function_">poop</span>()</span><br><span class="line">    dog</span><br><span class="line">      .<span class="title function_">wangwang</span>()</span><br><span class="line">    cat</span><br><span class="line">      .<span class="title function_">miaomiao</span>()</span><br></pre></td></tr></table></figure>
+
+<h3 id="两个机器人"><a href="#两个机器人" class="headerlink" title="两个机器人"></a>两个机器人</h3><blockquote>
+<p>我想让机器人可以s人</p>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">murderRobot</span><br><span class="line">  .<span class="title function_">run</span>() <span class="comment">// 可以跑</span></span><br><span class="line">  .<span class="title function_">kill</span>() <span class="comment">// 可以s人</span></span><br><span class="line">cleaningRobot</span><br><span class="line">  .<span class="title function_">run</span>()</span><br><span class="line">  .<span class="title function_">clean</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment">// 伪代码</span></span><br><span class="line">animal</span><br><span class="line">  .<span class="title function_">poop</span>()</span><br><span class="line">    dog</span><br><span class="line">      .<span class="title function_">wangwang</span>()</span><br><span class="line">    cat</span><br><span class="line">      .<span class="title function_">miaomiao</span>()</span><br></pre></td></tr></table></figure>
+
+<p>那么上面代码会发现，s人机器人和扫地机器人它们都可以跑，那么就可以抽象成以下代码：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 伪代码，s人机器人和扫地机器人都继承机器人可以跑的功能</span></span><br><span class="line">robot</span><br><span class="line">  .<span class="title function_">run</span>()</span><br><span class="line">    murderRobot</span><br><span class="line">      .<span class="title function_">kill</span>()</span><br><span class="line">    cleaningRobot</span><br><span class="line">      .<span class="title function_">clean</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment">// 伪代码</span></span><br><span class="line">animal</span><br><span class="line">  .<span class="title function_">poop</span>()</span><br><span class="line">    dog</span><br><span class="line">      .<span class="title function_">wangwang</span>()</span><br><span class="line">    cat</span><br><span class="line">      .<span class="title function_">miaomiao</span>()</span><br></pre></td></tr></table></figure>
+
+<h3 id="终极变态需求"><a href="#终极变态需求" class="headerlink" title="终极变态需求"></a>终极变态需求</h3><blockquote>
+<p>那么我想要一个：狗形s人机器人</p>
+</blockquote>
+<p>那么看看我们如何解决这个需求</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"># 伪代码</span><br><span class="line">robot</span><br><span class="line"># 跑我们需要</span><br><span class="line">  .run()</span><br><span class="line">    murderRobot</span><br><span class="line"># s人我们需要</span><br><span class="line">      .kill()</span><br><span class="line">    cleaningRobot</span><br><span class="line">      .clean()</span><br><span class="line"></span><br><span class="line">// 伪代码</span><br><span class="line">animal</span><br><span class="line"># 拉屎我们不需要，机器人怎么能拉屎呢？</span><br><span class="line">  .poop()</span><br><span class="line">    dog</span><br><span class="line">## 汪汪叫我们需要</span><br><span class="line">      .wangwang()</span><br><span class="line">    cat</span><br><span class="line">      .miaomiao()</span><br></pre></td></tr></table></figure>
+
+<p>那么请问：这个需求我们如何用继承来解决？是不是很难？因为狗是继承了 animal 的拉屎呀！所以想用继承实现，是基本做不到的，或者说是非常难！</p>
+<h3 id="继承做不到，那么我们使用组合"><a href="#继承做不到，那么我们使用组合" class="headerlink" title="继承做不到，那么我们使用组合"></a>继承做不到，那么我们使用组合</h3><p>那就太简单了，让我们把功能组合一下</p>
+<ul>
+<li><code>dog = poop() + wangwang()</code></li>
+<li><code>cat = poop() + miaomiao()</code></li>
+<li><code>cleaningRobot = run() + clean()</code></li>
+<li><code>狗形s人机器人 = run() + kill() + wangwang()</code></li>
+</ul>
+<h4 id="不用-class-代码怎么写？"><a href="#不用-class-代码怎么写？" class="headerlink" title="不用 class 代码怎么写？"></a>不用 <code>class</code> 代码怎么写？</h4><p>不用 <code>class</code> 写 <code>Dog</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">createWang</span> = state =&gt; (&#123;</span><br><span class="line">  <span class="attr">wangwang</span>: <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`汪汪！我是<span class="subst">$&#123;state.name&#125;</span>`</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">const</span> <span class="title function_">createRun</span> = state =&gt; (&#123;</span><br><span class="line">  <span class="attr">run</span>: <span class="function">() =&gt;</span> state.<span class="property">position</span> += <span class="number">1</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">const</span> <span class="title function_">createDog</span> = name =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> state = &#123;</span><br><span class="line">    name,</span><br><span class="line">    <span class="attr">position</span>: <span class="number">0</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="title class_">Object</span>.<span class="title function_">assign</span>(</span><br><span class="line">    &#123;&#125;,</span><br><span class="line">    <span class="title function_">createWang</span>(state),</span><br><span class="line">    <span class="title function_">createRun</span>(state)</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> dog = <span class="title function_">createDog</span>(<span class="string">&#x27;旺财&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>那么现在运行一下以上代码：</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/721131bd909d46e7abd8ccd9c3626551~tplv-k3u1fbpfcp-watermark.image" alt="Dog.png"><br>那我们来实现狗形s人机器人：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">createMurderRobot</span> = name =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> state = &#123;</span><br><span class="line">    name,</span><br><span class="line">    <span class="attr">position</span>: <span class="number">0</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="title class_">Object</span>.<span class="title function_">assign</span>(</span><br><span class="line">    &#123;&#125;,</span><br><span class="line">    <span class="title function_">createWang</span>(state),</span><br><span class="line">    <span class="title function_">createRun</span>(state)</span><br><span class="line">    <span class="title function_">createKill</span>(state)</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> murderRobot = <span class="title function_">createMurderRobot</span>(<span class="string">&#x27;小黑&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>你看！这种办法是不是让我们的代码组合非常的灵活？</p>
+<p>这就是组合模式</p>
+<h1 id="运用场景"><a href="#运用场景" class="headerlink" title="运用场景"></a>运用场景</h1><p>难道我们就不用继承了吗？</p>
+<p>当然不是</p>
+<h2 id="什么时候用继承"><a href="#什么时候用继承" class="headerlink" title="什么时候用继承"></a>什么时候用继承</h2><h3 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h3><ul>
+<li>开发者不会用组合</li>
+<li>功能没有太多交叉的地方，一眼就能看出继承关系</li>
+<li>前端库比较喜欢用继承</li>
+</ul>
+<h3 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h3><ul>
+<li><code>const vm = new Vue(&#123;...&#125;)</code></li>
+<li>Vue 继承了 EventEmitter</li>
+<li><code>class App extends React.Component&#123;...&#125;</code></li>
+<li>React.Component 内置了方便的复用功能（钩子）</li>
+</ul>
+<h2 id="什么时候用组合"><a href="#什么时候用组合" class="headerlink" title="什么时候用组合"></a>什么时候用组合</h2><h3 id="场景-1"><a href="#场景-1" class="headerlink" title="场景"></a>场景</h3><ul>
+<li>功能组合非常灵活，无法一眼看出继承关系</li>
+<li>插件系统</li>
+<li>mixin 模式</li>
+</ul>
+<h4 id="举例-1"><a href="#举例-1" class="headerlink" title="举例"></a>举例</h4><ul>
+<li><code>Vue.mixin()</code></li>
+<li><code>Vue.use(MyPlugin)</code></li>
+<li>React 接受组件的组件</li>
+</ul>
+<h1 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h1><p>写法太灵活，我这里写的组合可能在其他人那里就不认同</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>但不管怎么写，反正最终前端程序员基本上达成一个共识：组合是优于继承的</p>
+<p>原因是组合能够实现扁平化的分配，而继承是垂直而，当出现交叉的时候，继承就基本做不到</p>
+<h1 id="一些吐槽"><a href="#一些吐槽" class="headerlink" title="一些吐槽"></a>一些吐槽</h1><p>前端程序员，在很早之前是被 <code>Java</code> 程序员所占领的（没有人学前端，只有学 Java 的人最接近前端），Javaers 就把面向对象、class 带到前端</p>
+<p>那个时候作为一名前端新人进到一个团队，那就看到面前有几位 Java 工程师转的前端，他们认为写代码应该用继承、用多态封装，然后你就抄他们的代码，然后抄着抄着发现面前的代码越写越复杂</p>
+<p>因为前端它的特点就是 —— 需求很灵活，不像后端有些数据结构是非常固定的，前端你可能随时都能新增一些数据</p>
+<p>这样的话前端就开始想：那会不会不是我的问题，而是面向对象的问题，为什么面向对象的继承这么难用，一旦出现交叉的数据，就搞不出来</p>
+<p>所以就开始往其他的方向探索，其中非常大的方向就是函数式编程，函数式编程一般来说就不需要「经典的 class」</p>
+<p>比如以上的代码，我就用函数来创造对象，我为什么要用 new？new 是一个前端程序员非常难以理解的东西</p>
+<hr>
+<p>感谢阅读，下次见 :)</p>
+</div>
+   
+  <a id="older" class="blog-nav" href="/2023/05/09/the-pros-and-cons-of-js/">OLDER&nbsp;&gt;</a>
+    
+  <br />
+  <a href="/archives">cd ../</a>
+</div>
+
+        <div class="footer">
+  
+  <div class="footer-more">
+      
+  </div>
+  
+  <div class="footer-more">
+      
+  </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+
+
+    </div>
+  </body>
+</html>
