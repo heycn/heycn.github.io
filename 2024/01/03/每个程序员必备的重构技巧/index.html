@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="陈楠的博客" />
+  <meta name="author" content="陈楠" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      每个程序员必备的重构技巧 
+      
+      
+    
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto:400,400italic,600|Roboto+Mono" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+
+  
+
+  
+    
+<link rel="stylesheet" href="/css/post.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="head">
+        <div class="avatar">
+  <a href="/">
+    <img src="/images/avatar.png" alt="" />
+  </a>
+</div>
+
+        <p class="links">
+  
+    <a title="Blog" target="" href="/archives">
+      <i class="iconfont icon-emoji-friendly"></i>
+      Blog
+    </a>
+  
+    <a title="Docs" target="_blank" href="/">
+      <i class="iconfont icon-tags"></i>
+      Docs
+    </a>
+  
+    <a title="GitHub" target="_blank" href="https://github.com/heycn">
+      <i class="iconfont icon-github"></i>
+      GitHub
+    </a>
+  
+    <a title="WeChat" target="_blank" href="/images/wechat.jpg">
+      <i class="iconfont icon-wechat"></i>
+      WeChat
+    </a>
+  
+    <a title="Twitter" target="_blank" href="https://twitter.com/heycn_112">
+      <i class="iconfont icon-twitter"></i>
+      Twitter
+    </a>
+  
+    <a title="Email" target="" href="mailto:heycn@foxmail.com">
+      <i class="iconfont icon-envelope"></i>
+      Email
+    </a>
+  
+</p>
+
+      </div>
+
+      <div class="main">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [
+        ['$', '$'],
+        ['\\(', '\\)']
+      ]
+    }
+  }
+</script>
+
+<div class="post">
+  <h1 class="post-title">每个程序员必备的重构技巧</h1>
+  <h3 class="date">Jan 03, 2024</h3>
+  <div class="content markdown-body"><p>推荐阅读：<a target="_blank" rel="noopener" href="https://coolshell.cn/articles/4758.html">如何写出无法维护的代码</a></p>
+<p>这里的重构技巧是：如何让代码更可读，而不是使代码性能更高</p>
+<h2 id="一、代码优化基本原则"><a href="#一、代码优化基本原则" class="headerlink" title="一、代码优化基本原则"></a>一、代码优化基本原则</h2><ol>
+<li><p>易读性优先</p>
+<p>尤其是在前端开发领域，你的代码好读比你的代码执行得快是更重要的</p>
+</li>
+<li><p>如果不是性能瓶颈，就不要为了性能而改写代码</p>
+</li>
+<li><p>复杂性守恒原则：无论你怎么写代码，复杂性都是不会消失的</p>
+<p>推论：如果逻辑很复杂，那么代码看起来就应该是复杂的；如果逻辑很简单，代码看起来就应该是简单的。</p>
+</li>
+</ol>
+<h2 id="二、如何命名"><a href="#二、如何命名" class="headerlink" title="二、如何命名"></a>二、如何命名</h2><h3 id="1-程序员三大难题"><a href="#1-程序员三大难题" class="headerlink" title="1. 程序员三大难题"></a>1. 程序员三大难题</h3><ol>
+<li>变量命名</li>
+<li>缓存失效</li>
+<li>循环边界</li>
+</ol>
+<h3 id="2-命名原则"><a href="#2-命名原则" class="headerlink" title="2. 命名原则"></a>2. 命名原则</h3><ol>
+<li>注意词性</li>
+</ol>
+<ul>
+<li>普通变量&#x2F;属性用「名词」</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> person = &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&#x27;Leo&#x27;</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>bool 变量&#x2F;属性用 <code>形容词</code>、<code>be 动词</code>、<code>情态动词</code> 或者 <code>hasXxx</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> person = &#123;</span><br><span class="line">  <span class="attr">dead</span>: <span class="literal">false</span>, <span class="comment">// 如果是形容词，前面就没必要加 is，比如isDead 就很废话</span></span><br><span class="line">  <span class="attr">canSpeak</span>: <span class="literal">true</span>, <span class="comment">//情态动词有 can、should、will、need 等，情态动词后面接动词</span></span><br><span class="line">  <span class="attr">isVip</span>: <span class="literal">true</span>, <span class="comment">// be 动词有 is、was 等，后面一般接名词</span></span><br><span class="line">  <span class="attr">hasChildren</span>: <span class="literal">true</span>, <span class="comment">// has 加名词</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>普通函数&#x2F;方法用<code>动词</code>开头</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> person = &#123;</span><br><span class="line">  <span class="title function_">run</span>(<span class="params"></span>) &#123;&#125;, <span class="comment">// 不及物动词</span></span><br><span class="line">  <span class="title function_">drinkWater</span>(<span class="params"></span>) &#123;&#125;, <span class="comment">// 及物动词</span></span><br><span class="line">  <span class="title function_">eat</span>(<span class="params">foo</span>) &#123;&#125;, <span class="comment">// 及物动词加参数(参数是名词)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>回调、钩子函数用<code>介词</code>开头，或用<code>动词的现在完成时态</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> person = &#123;</span><br><span class="line">  <span class="title function_">beforeDie</span>(<span class="params"></span>) &#123;&#125;,</span><br><span class="line">  <span class="title function_">afterDie</span>(<span class="params"></span>) &#123;&#125;,</span><br><span class="line">  <span class="comment">// 或者</span></span><br><span class="line">  <span class="title function_">willDie</span>(<span class="params"></span>) &#123;&#125;,</span><br><span class="line">  <span class="title function_">dead</span>(<span class="params"></span>) &#123;&#125;, <span class="comment">// 这里跟 bool 冲突，你只要不同时暴露 bool dead 和函数 dead 就行，怕冲突就用上面的 afterDie</span></span><br><span class="line">&#125;</span><br><span class="line">button.<span class="title function_">addEventListener</span>(<span class="string">&#x27;click&#x27;</span>, onButtonClick)</span><br><span class="line"><span class="keyword">const</span> component = &#123;</span><br><span class="line">  <span class="title function_">beforeCreate</span>(<span class="params"></span>) &#123;&#125;,</span><br><span class="line">  <span class="title function_">created</span>(<span class="params"></span>) &#123;&#125;,</span><br><span class="line">  <span class="title function_">beforeMount</span>(<span class="params"></span>) &#123;&#125;,</span><br><span class="line">  <span class="title function_">mounted</span>(<span class="params"></span>) &#123;&#125;,</span><br><span class="line">  <span class="title function_">beforeUpdate</span>(<span class="params"></span>) &#123;&#125;,</span><br><span class="line">  <span class="title function_">updated</span>(<span class="params"></span>) &#123;&#125;,</span><br><span class="line">  <span class="title function_">activated</span>(<span class="params"></span>) &#123;&#125;,</span><br><span class="line">  <span class="title function_">deactivated</span>(<span class="params"></span>) &#123;&#125;,</span><br><span class="line">  <span class="title function_">beforeDestroy</span>(<span class="params"></span>) &#123;&#125;,</span><br><span class="line">  <span class="title function_">destroyed</span>(<span class="params"></span>) &#123;&#125;,</span><br><span class="line">  <span class="title function_">errorCaptured</span>(<span class="params"></span>) &#123;&#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>容易混淆的地方加前缀</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">div1.<span class="property">classList</span>.<span class="title function_">add</span>(<span class="string">&#x27;active&#x27;</span>) <span class="comment">// DOM 对象</span></span><br><span class="line">div2.<span class="title function_">addClass</span>(<span class="string">&#x27;active&#x27;</span>) <span class="comment">// jQuery 对象</span></span><br><span class="line"><span class="comment">// 建议改成</span></span><br><span class="line">domDiv1</span><br><span class="line"><span class="comment">// 或</span></span><br><span class="line">elDiv1.<span class="property">classList</span>.<span class="title function_">add</span>(<span class="string">&#x27;active&#x27;</span>)</span><br><span class="line">$div2.<span class="title function_">addClass</span>(<span class="string">&#x27;active&#x27;</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>属性访问器函数可以用名词</p>
+<blockquote>
+<p>约定俗成</p>
+</blockquote>
+</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$div.<span class="title function_">text</span>() <span class="comment">// 其实是 $div.getText()</span></span><br><span class="line">$div.<span class="title function_">text</span>(<span class="string">&#x27;hi&#x27;</span>) <span class="comment">// 其实是 $div.setText(&#x27;hi&#x27;)</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>注意一致性</li>
+</ol>
+<ul>
+<li><p>介词一致性</p>
+<p>如果你使用了 before + after，那么就在代码的所有地方都坚持使用<br>如果你使用了 before + 完成时，那么就坚持使用<br>如果你改来改去，就「不一致」了，不一致将导致「不可预测」</p>
+</li>
+<li><p>顺序一致性</p>
+<p>比如 <code>updateContainerWidth</code> 和 <code>updateHeightOfContainer</code> 的顺序就令人很别扭，同样会引发 「不可预测」</p>
+</li>
+<li><p>表里一致性</p>
+<p>函数名必须完美体现函数的功能，既不能多也不能少。</p>
+<p>比如</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">getSongs</span>(<span class="params"></span>)&#123;</span><br><span class="line">  <span class="keyword">return</span> $.<span class="title function_">get</span>(<span class="string">&#x27;/songs&#x27;</span>).<span class="title function_">then</span>((response)&#123;</span><br><span class="line">      div.<span class="property">innerText</span> = response.<span class="property">songs</span></span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>就违背了表里一致性，getSongs 表示获取歌曲，并没有暗示这个函数会更新页面，但是实际 上函数更新了 div，这就是表里不一</p>
+<p>正确的写法是：</p>
+<ul>
+<li>要么纠正函数名</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">getSongsAndUpdateDiv</span>(<span class="params"></span>)&#123;</span><br><span class="line">  <span class="keyword">return</span> $.<span class="title function_">get</span>(<span class="string">&#x27;/songs&#x27;</span>).<span class="title function_">then</span>((response)&#123;</span><br><span class="line">      div.<span class="property">innerText</span> = response.<span class="property">songs</span></span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>要么写成两个函数</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">getSongs</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> $.<span class="title function_">get</span>(<span class="string">&#x27;/songs&#x27;</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">updateDiv</span>(<span class="params">songs</span>) &#123;</span><br><span class="line">  div.<span class="property">innerText</span> = response.<span class="property">songs</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">getSongs</span>().<span class="title function_">then</span>(<span class="function"><span class="params">response</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="title function_">updateDiv</span>(response.<span class="property">songs</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>时间一致性</p>
+<blockquote>
+<p>添加代码很容易，而改代码是很难的，改名字很容易引发其他 bug</p>
+</blockquote>
+</li>
+</ul>
+<p>有可能随着代码的变迁，一个变量的含义已经不同于它一开始的含义了，这个时候你需要及时<br>改掉这个变量的名字。</p>
+<p>这一条是最难做到的，因为写代码容易，改代码难。如果这个代码组织得不好，很可能会出现牵一发而动全身的情况(如全局变量就很难改)</p>
+</li>
+</ul>
+<h2 id="三、如何改代码"><a href="#三、如何改代码" class="headerlink" title="三、如何改代码"></a>三、如何改代码</h2><p>如果你的代码有单元测试，那么改起来就很放心。如果没有单元测试，就需要用<code>小步快跑</code>的策略来修改。</p>
+<p>什么是<code>小步快跑</code>：每次不要改很多，每次只改一点点，测试通过后，再改一点点，再测试，再改一点点… 如此反复。</p>
+<p>那么如何修改一点点呢?《重构》这本书介绍了很多方法，但是讲得太宏观太啰嗦了，如果你有时间可以看看。</p>
+<p>我比较喜欢下面两个经久不衰的方法</p>
+<h3 id="1-使用函数来改代码"><a href="#1-使用函数来改代码" class="headerlink" title="1. 使用函数来改代码"></a>1. 使用函数来改代码</h3><p>步骤:</p>
+<ol>
+<li>将一坨代码放到一个函数里</li>
+<li>将代码依赖的外部变量作为参数</li>
+<li>将代码的输出作为函数的返回值</li>
+<li>给函数取一个合适的名字</li>
+<li>调用这个函数并传入参数</li>
+<li>这个函数里的代码如果超过 5 行或者多处结构相似，则依然有优化的空间，请回到第 1 步</li>
+</ol>
+<h3 id="2-使用对象来改代码"><a href="#2-使用对象来改代码" class="headerlink" title="2. 使用对象来改代码"></a>2. 使用对象来改代码</h3><p>如果使用了函数改造法改造后，发现有太多的小函数，则可以使用对象讲这个函数串起来。</p>
+<p>由于 JS 的 this，这种方法可能会不安全</p>
+<h3 id="3-一些固定的套路"><a href="#3-一些固定的套路" class="headerlink" title="3. 一些固定的套路"></a>3. 一些固定的套路</h3><ol>
+<li><p>表驱动编程（《代码大全》里说的）<br>所有一一对应的关系都可以用表来做</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 计算分数对应的等级</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 优化前</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">calculateGrade</span>(<span class="params">score</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (score == <span class="number">100</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;A+&#x27;</span></span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (score &gt;= <span class="number">90</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;A&#x27;</span></span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (score &gt;= <span class="number">80</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;B&#x27;</span></span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (score &gt;= <span class="number">70</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;C&#x27;</span></span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (score &gt;= <span class="number">60</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;D&#x27;</span></span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;E&#x27;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 优化后</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">calculateGrade</span>(<span class="params">score</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> gradeMap = &#123;</span><br><span class="line">    <span class="number">100</span>: <span class="string">&#x27;A+&#x27;</span>,</span><br><span class="line">    <span class="number">90</span>: <span class="string">&#x27;A&#x27;</span>,</span><br><span class="line">    <span class="number">80</span>: <span class="string">&#x27;B&#x27;</span>,</span><br><span class="line">    <span class="number">70</span>: <span class="string">&#x27;C&#x27;</span>,</span><br><span class="line">    <span class="number">60</span>: <span class="string">&#x27;D&#x27;</span>,</span><br><span class="line">    <span class="attr">others</span>: <span class="string">&#x27;E&#x27;</span>,</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> formatScore = <span class="built_in">parseInt</span>(score / <span class="number">10</span>, <span class="number">10</span>)</span><br><span class="line">  <span class="keyword">return</span> gradeMap[formatScore] || gradeMap[<span class="string">&#x27;others&#x27;</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>自说明代码（以 API 参数为例）</p>
+<blockquote>
+<p>把一个变量名命名好，就已经是自说明代码了</p>
+</blockquote>
+<p>这里另外一种方式是：把别人关心的东西放在显眼的位置</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 比如你封装一个 Dialog 组件，你可以让开发者知道有这些 API</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Dialog</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params">options</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> defaultOptions = &#123;</span><br><span class="line">      <span class="attr">title</span>: <span class="string">&#x27;提示&#x27;</span>,</span><br><span class="line">      <span class="attr">content</span>: <span class="string">&#x27;&lt;h2&gt;请填写content&lt;/h2&gt;&#x27;</span>,</span><br><span class="line">      <span class="attr">confirmButtonText</span>: <span class="string">&#x27;确定&#x27;</span>,</span><br><span class="line">      <span class="attr">cancelButtonText</span>: <span class="string">&#x27;取消&#x27;</span>,</span><br><span class="line">      <span class="attr">onConfirm</span>: <span class="function">() =&gt;</span> &#123;&#125;,</span><br><span class="line">      <span class="attr">onCancel</span>: <span class="function">() =&gt;</span> &#123;&#125;,</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">options</span> = <span class="title class_">Object</span>.<span class="title function_">assign</span>(&#123;&#125;, defaultOptions, options)</span><br><span class="line">  <span class="comment">// Object.assign 就是把对象后面的值依次赋值(覆盖)到前面</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>defaultOptions 就类似文档说明</p>
+</li>
+</ol>
+<h2 id="四、什么是-bad-smell-坏味道"><a href="#四、什么是-bad-smell-坏味道" class="headerlink" title="四、什么是 bad smell(坏味道)"></a>四、什么是 bad smell(坏味道)</h2><blockquote>
+<p>有些代码可以用，但是散发着<code>恶臭</code>的味道。</p>
+</blockquote>
+<p>例如：</p>
+<ol>
+<li>表里不一的代码</li>
+<li>过时的注释</li>
+<li>逻辑很简单，但是看起来很复杂的代码</li>
+<li>重复的代码</li>
+<li>相似的代码</li>
+<li>总是一起出现的代码</li>
+</ol>
+<h2 id="五、普遍现象-——-破窗效应"><a href="#五、普遍现象-——-破窗效应" class="headerlink" title="五、普遍现象 —— 破窗效应"></a>五、普遍现象 —— 破窗效应</h2><blockquote>
+<p>一种犯罪心理学理论，此理论认为环境中的不良现象如果被放任存在，会诱使人们仿效，甚至变本加厉。</p>
+</blockquote>
+<p>维基百科的例子：</p>
+<p>以一幢有少许破窗的建筑为例，如果那些窗没修理好，可能将会有破坏者破坏更多的窗户。最终他们甚至会闯入建筑内，如果发现无人居住，也许就在那里占领、定居或者纵火。又或想像一条人行道有些许纸屑，如果无人清理，不久后就会有更多垃圾，最终人们会视为理所当然地将垃圾顺手丢弃在地上。因此破窗理论强调着力打击轻微罪行有助减少更严重罪案，甚至应该以零容忍的态度面对罪案。</p>
+<p>在一个项目中，有一处写得不好的代码，就是<code>破窗效应</code>的起源，最终变为<code>屎山</code></p>
+<p>所以我们程序员要有一点追求：只要是经过你手里的代码，都会比之前好一点。</p>
+<hr>
+<p>感谢阅读，下次见 :)</p>
+</div>
+   
+  <a id="older" class="blog-nav" href="/2023/05/26/why-i-dont-like-extends-in-JS/">OLDER&nbsp;&gt;</a>
+    
+  <br />
+  <a href="/archives">cd ../</a>
+</div>
+
+        <div class="footer">
+  
+  <div class="footer-more">
+      
+  </div>
+  
+  <div class="footer-more">
+      
+  </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+
+
+    </div>
+  </body>
+</html>
